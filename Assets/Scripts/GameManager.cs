@@ -34,14 +34,14 @@ public class GameManager : MonoBehaviour
     {
         Vector2 firstInLevel = initialCube.position;
         int blockN = 2;
-        for (int level = 1; level < height; level++)
+        for (int row = 1; row < height; row++)
         {
             firstInLevel.x -= stepDistance.x / 2;
             firstInLevel.y -= stepDistance.y;
-            int width = level + 1;
-            for (int block = 0;  block < width; block++)
+            int width = row + 1;
+            for (int posInRow = 0;  posInRow < width; posInRow++)
             {
-                float blockX = block == 0? firstInLevel.x : firstInLevel.x + (block * stepDistance.x);
+                float blockX = posInRow == 0? firstInLevel.x : firstInLevel.x + (posInRow * stepDistance.x);
                 float blockY = firstInLevel.y;
                 Vector3 blockPosition = new Vector3(blockX, blockY,0);
                 var newBlock = Instantiate(CubePrefab, blockPosition,Quaternion.identity);
