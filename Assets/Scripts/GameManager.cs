@@ -7,15 +7,36 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("PiramidContruction")]
-    [SerializeField] [Min(2)] private int piramidLevels;
-    [SerializeField] Vector2 stepDistance;
+    [SerializeField] [Min(2)] private int _piramidLevels;
+    [SerializeField] Transform _piramidSpawnPoint;
+    [SerializeField] Vector2 _stepDistance;
     [SerializeField] GameObject CubePrefab;
-    public Transform piramidSpawnPoint { get; }
 
+    public int totalPiramidLevels
+    {
+        get
+        {
+            return _piramidLevels;
+        }
+    }
+    public Transform piramidSpawnPoint
+    {
+        get
+        {
+            return _piramidSpawnPoint;
+        }
+    }
+    public Vector2 stepDistance
+    {
+        get
+        {
+            return _stepDistance;
+        }
+    }
 
     private void Awake()
     {
-        if(sharedInstance == null)
+        if (sharedInstance == null)
         {
             sharedInstance = this;
         }
@@ -23,10 +44,11 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+       
     }
 
     private void Start()
     {
-        Builder.BuildPiramidMap(piramidSpawnPoint, piramidLevels, stepDistance, CubePrefab);
+         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
     }
 }

@@ -3,12 +3,37 @@ using UnityEngine;
 
 public class Builder : MonoBehaviour
 {
+    public static Builder sharedInstance;
+
     [Header("PiramidContruction")]
     [SerializeField] [Min(2)] private int piramidLevels;
     [SerializeField] Vector2 stepDistance;
     [SerializeField] GameObject CubePrefab;
 
     WalkableTile initialCube;
+
+    private void Awake()
+    {
+        if (sharedInstance == null)
+        {
+            sharedInstance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+    public Vector2 ConvertLogicalCoordinates2GlobalPosition(Vector2 logicalCoordinates)
+    {
+        Transform piramidTopGlobalPosition = GameManager.sharedInstance.piramidSpawnPoint;
+        Vector2 stepDistance = GameManager.sharedInstance.stepDistance;
+        Vector3 targetGlobalPosition = Vector3.zero;
+        targetGlobalPosition.x = (logicalCoordinates.x - logicalCoordinates.y) * stepDistance.x / 2;
+        targetGlobalPosition.y = -1 * (logicalCoordinates.x + logicalCoordinates.y) * stepDistance.y;
+        targetGlobalPosition = targetGlobalPosition + piramidTopGlobalPosition.position;
+        return targetGlobalPosition;
+    }
 
     public void BuildPiramidMap()
     {
@@ -44,9 +69,8 @@ public class Builder : MonoBehaviour
         }
     }
 
-
     // build the whole piramid in execution time
-    static public void BuildPiramidMap(Transform spawnPoint,int piramidLevels,Vector2 stepDistance, GameObject CubePrefab)
+    static public void BuildPiramidMap(Transform spawnPoint, int piramidLevels, Vector2 stepDistance, GameObject CubePrefab)
     {
         Vector2 firstInLevel = spawnPoint.position;
 
