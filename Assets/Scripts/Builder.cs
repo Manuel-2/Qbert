@@ -45,7 +45,7 @@ public class Builder : MonoBehaviour
     }
 
 
-    // make the code build the whole piramid
+    // build the whole piramid in execution time
     static public void BuildPiramidMap(Transform spawnPoint,int piramidLevels,Vector2 stepDistance, GameObject CubePrefab)
     {
         Vector2 firstInLevel = spawnPoint.position;
