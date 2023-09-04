@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Min(2)] private int piramidLevels;
     [SerializeField] Vector2 stepDistance;
     [SerializeField] GameObject CubePrefab;
-    [SerializeField] Transform priamidSpawnPoint;
+    public Transform piramidSpawnPoint { get; }
 
 
     private void Awake()
@@ -27,6 +27,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        Builder.BuildPiramidMap(priamidSpawnPoint, piramidLevels, stepDistance, CubePrefab);
+        Builder.BuildPiramidMap(piramidSpawnPoint, piramidLevels, stepDistance, CubePrefab);
     }
 }
