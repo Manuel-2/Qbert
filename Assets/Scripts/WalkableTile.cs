@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public class Cube : MonoBehaviour
+public class WalkableTile : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
 
@@ -23,7 +23,7 @@ public class Cube : MonoBehaviour
 
     int[] _position = null;
 
-    public int[] position
+    public int[] logicalPosition
     {
         get
         {
@@ -45,6 +45,7 @@ public class Cube : MonoBehaviour
 
     public void stepIn()
     {
-        //read the current color, and find what colors the level has
+        //TODO: read the current color, and find what colors the level has
+        Debug.Log($"the tile {this.gameObject.name} has been pressed");
     }
 }
