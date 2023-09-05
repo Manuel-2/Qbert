@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class PlayerController : Jumper
 {
-    private void Update()
+    public override void Update()
     {
+        base.Update();
         ReadInput();
     }
 

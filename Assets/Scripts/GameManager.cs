@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager sharedInstance;
 
+    [Header("Game Configuration")]
+    public float[] jumpSpeeds;
+
     [Header("PiramidContruction")]
     [SerializeField] [Min(2)] private int _piramidLevels;
     [SerializeField] Transform _piramidSpawnPoint;

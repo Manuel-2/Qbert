@@ -6,10 +6,45 @@ abstract public class Jumper : MonoBehaviour
     [SerializeField] bool interactsWithTiles;
     protected Vector2 currentLogicalCoordinates;
 
-    void initializedJumper(Vector2 logicalSpawnPoint)
+    private bool lerping;
+    private float jumpLerpCurrent;
+    private Vector2 startPosition, targetPosition;
+    private float currentJumpLerpSpeed;
+
+    private void Start()
+    {
+        InitializedJumper(Vector2.zero);
+    }
+
+    public virtual void Update()
+    {
+        if (lerping)
+        {
+            jumpLerpCurrent = Mathf.MoveTowards(jumpLerpCurrent, 1, currentJumpLerpSpeed * Time.deltaTime);
+            this.transform.position = Vector3.Lerp(startPosition, targetPosition, jumpLerpCurrent);
+
+            if(jumpLerpCurrent == 1)
+            {
+                //stop lerping
+            }
+        }
+    }
+
+    private void InitializedJumper(Vector2 logicalSpawnPoint)
     {
         currentLogicalCoordinates.x = logicalSpawnPoint.x;
         currentLogicalCoordinates.y = logicalSpawnPoint.y;
+        // todo: select the speed based on dificulty
+        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[0];
+        lerping = false;
+    }
+
+    private void LerpJump(Vector2 currentPosition, Vector2 targetPosition)
+    {
+        lerping = true;
+        jumpLerpCurrent = 0;
+        startPosition = currentPosition;
+        this.targetPosition = targetPosition;
     }
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
@@ -28,21 +63,18 @@ abstract public class Jumper : MonoBehaviour
             return;
         }
         Transform targetBlockTransform = GameManager.sharedInstance.piramidSpawnPoint.Find($"{targetLogicalCoordinates.x}-{targetLogicalCoordinates.y}");
-        //if (targetBlockTransform == null)
-        //{
-        //    FallInTheVoid(targetLogicalCoordinates);
-        //    return;
-        //}
-        //TODO: interpolate x and y position
-        Vector2 newGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
-        this.transform.position = newGlobalPosition;
-        currentLogicalCoordinates = targetLogicalCoordinates;
+
+        Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
+        LerpJump(this.transform.position, targetGlobalPosition);
 
         if (interactsWithTiles)
         {
             WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
             blockTileComponent.stepIn();
         }
+
+        //update the new logical position
+        currentLogicalCoordinates = targetLogicalCoordinates;
     }
 
     public virtual void FallInTheVoid(Vector2 logicalCoordinates)

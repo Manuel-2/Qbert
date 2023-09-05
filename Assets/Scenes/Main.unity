@@ -167,6 +167,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb3500e4ed9ba594886042085c892c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpSpeeds:
+  - 1
+  - 1
+  - 1
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}
   _stepDistance: {x: 0.9677419, y: 0.7419355}
@@ -496,7 +500,7 @@ GameObject:
   m_Layer: 0
   m_Name: Piramid
   m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: 89463d7ef41e6ae4387f5165bbb9588c, type: 3}
+  m_Icon: {fileID: 2800000, guid: 959fe105664c6ea40a3dddc9caa13455, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
