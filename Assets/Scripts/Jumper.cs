@@ -1,13 +1,10 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Jumper : MonoBehaviour
+abstract public class Jumper : MonoBehaviour
 {
     [SerializeField] bool interactsWithTiles;
-    [SerializeField] int jumpToX;
-    [SerializeField] int jumpToY;
-
-    Vector2 currentLogicalCoordinates;
+    protected Vector2 currentLogicalCoordinates;
 
     void initializedJumper(Vector2 logicalSpawnPoint)
     {
@@ -15,7 +12,7 @@ public class Jumper : MonoBehaviour
         currentLogicalCoordinates.y = logicalSpawnPoint.y;
     }
 
-    void Jump(Vector2 targetLogicalCoordinates)
+    public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
         /*
         piramid levels:
@@ -25,26 +22,33 @@ public class Jumper : MonoBehaviour
          */
         float piramidLevel = targetLogicalCoordinates.x + targetLogicalCoordinates.y;
 
-        if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels)
+        if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1)
         {
             FallInTheVoid(targetLogicalCoordinates);
             return;
         }
         Transform targetBlockTransform = GameManager.sharedInstance.piramidSpawnPoint.Find($"{targetLogicalCoordinates.x}-{targetLogicalCoordinates.y}");
-        WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
-
+        //if (targetBlockTransform == null)
+        //{
+        //    FallInTheVoid(targetLogicalCoordinates);
+        //    return;
+        //}
         //TODO: interpolate x and y position
         Vector2 newGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         this.transform.position = newGlobalPosition;
         currentLogicalCoordinates = targetLogicalCoordinates;
 
         if (interactsWithTiles)
+        {
+            WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
             blockTileComponent.stepIn();
+        }
     }
 
-    void FallInTheVoid(Vector2 logicalCoordinates)
+    public virtual void FallInTheVoid(Vector2 logicalCoordinates)
     {
         // todo: make and interpolation or something maybe phisycss
+        Debug.Log("you fall in to the void");
     }
 
 }
