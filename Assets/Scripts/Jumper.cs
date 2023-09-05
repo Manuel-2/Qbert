@@ -23,8 +23,8 @@ abstract public class Jumper : MonoBehaviour
         {
             jumpLerpCurrent = Mathf.MoveTowards(jumpLerpCurrent, jumpLerpTarget, currentJumpLerpSpeed * Time.deltaTime);
 
-            float xCurrentPosition = Mathf.Lerp(startPosition.x, targetPosition.x, jumpXCurve.Evaluate(jumpLerpCurrent));
-            float yCurrentPosition = Mathf.Lerp(startPosition.y, targetPosition.y, jumpYCurve.Evaluate(jumpLerpCurrent));
+            float xCurrentPosition = Mathf.LerpUnclamped(startPosition.x, targetPosition.x, jumpXCurve.Evaluate(jumpLerpCurrent));
+            float yCurrentPosition = Mathf.LerpUnclamped(startPosition.y, targetPosition.y, jumpYCurve.Evaluate(jumpLerpCurrent));
             this.transform.position = new Vector3(xCurrentPosition, yCurrentPosition, 0);
 
             if (jumpLerpCurrent == jumpLerpTarget)
