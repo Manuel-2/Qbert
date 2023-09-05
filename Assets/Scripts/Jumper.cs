@@ -8,7 +8,7 @@ abstract public class Jumper : MonoBehaviour
 
     [SerializeField] AnimationCurve jumpXCurve, jumpYCurve;
     private bool lerping;
-    private float jumpLerpCurrent;
+    private float jumpLerpCurrent, jumpLerpTarget;
     private Vector2 startPosition, targetPosition;
     private float currentJumpLerpSpeed;
 
@@ -21,14 +21,15 @@ abstract public class Jumper : MonoBehaviour
     {
         if (lerping)
         {
-            jumpLerpCurrent = Mathf.MoveTowards(jumpLerpCurrent, 1, currentJumpLerpSpeed * Time.deltaTime);
+            jumpLerpCurrent = Mathf.MoveTowards(jumpLerpCurrent, jumpLerpTarget, currentJumpLerpSpeed * Time.deltaTime);
+
             float xCurrentPosition = Mathf.Lerp(startPosition.x, targetPosition.x, jumpXCurve.Evaluate(jumpLerpCurrent));
             float yCurrentPosition = Mathf.Lerp(startPosition.y, targetPosition.y, jumpYCurve.Evaluate(jumpLerpCurrent));
             this.transform.position = new Vector3(xCurrentPosition, yCurrentPosition, 0);
 
-            if (jumpLerpCurrent == 1)
+            if (jumpLerpCurrent == jumpLerpTarget)
             {
-                //stop lerping
+                lerping = false;
             }
         }
     }
@@ -45,13 +46,26 @@ abstract public class Jumper : MonoBehaviour
     private void LerpJump(Vector2 currentPosition, Vector2 targetPosition)
     {
         lerping = true;
-        jumpLerpCurrent = 0;
-        startPosition = currentPosition;
-        this.targetPosition = targetPosition;
+        if (currentPosition.y > targetPosition.y)
+        {
+            jumpLerpCurrent = 1;
+            jumpLerpTarget = 0;
+            startPosition = targetPosition;
+            this.targetPosition = currentPosition;
+        }
+        else
+        {
+            // original
+            jumpLerpCurrent = 0;
+            jumpLerpTarget = 1;
+            startPosition = currentPosition;
+            this.targetPosition = targetPosition;
+        }
     }
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
+        if (lerping) return;
         /*
         piramid levels:
             # --- level 0
@@ -82,7 +96,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void FallInTheVoid(Vector2 logicalCoordinates)
     {
-        // todo: make and interpolation or something maybe phisycss
+        // todo: make and interpolation or something maybe physics
     }
 
 }
