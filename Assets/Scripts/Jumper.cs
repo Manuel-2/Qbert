@@ -3,8 +3,10 @@ using UnityEngine;
 
 abstract public class Jumper : MonoBehaviour
 {
+    [SerializeField] Animator jumperAnimator;
+    [SerializeField] string jumpTriggerName;
     [SerializeField] SpriteRenderer jumperSprite;
-    [SerializeField][Tooltip("0 if is facing left, 1 to the right")] int spriteFacingDirection;
+    [SerializeField] [Tooltip("0 if is facing left, 1 to the right")] int spriteFacingDirection;
 
     [SerializeField] bool interactsWithTiles;
     protected Vector2 currentLogicalCoordinates;
@@ -49,7 +51,11 @@ abstract public class Jumper : MonoBehaviour
         currentLogicalCoordinates.x = logicalSpawnPoint.x;
         currentLogicalCoordinates.y = logicalSpawnPoint.y;
         // todo: select the speed based on dificulty
-        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[0];
+        int difficultyLevel = 0;
+        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[difficultyLevel];
+        // Discalimer this only works because the animation of the base speed was sincronised manually with the lerp speed factor of 2
+        // if you change the base speed, you have to re animate the character
+        jumperAnimator.speed = currentJumpLerpSpeed / 2;
         lerping = false;
     }
 
@@ -78,6 +84,17 @@ abstract public class Jumper : MonoBehaviour
     {
         if (!isAlive) return;
         if (lerping) return;
+        Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
+
+        // face direction
+        jumperSprite.flipX = System.Convert.ToBoolean(spriteFacingDirection) || targetGlobalPosition.x > this.transform.position.x;
+        if (jumperSprite.flipX)
+        {
+            jumperSprite.transform.localPosition = new Vector3(-jumperSprite.transform.localPosition.x, jumperSprite.transform.localPosition.y, 0);
+        }
+
+        jumperAnimator.SetTrigger(jumpTriggerName);
+
         /*
         piramid levels:
             # --- level 0
@@ -90,8 +107,7 @@ abstract public class Jumper : MonoBehaviour
             FallInTheVoid(targetLogicalCoordinates);
             return;
         }
-        
-        Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
+
         LerpJump(this.transform.position, targetGlobalPosition);
 
         if (interactsWithTiles)
@@ -100,11 +116,6 @@ abstract public class Jumper : MonoBehaviour
             WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
             blockTileComponent.stepIn();
         }
-
-        //feedback and polish
-        // 0 && t.y > c.y = dont
-        // 1 && t.y > c.y = flip
-        jumperSprite.flipX = System.Convert.ToBoolean(spriteFacingDirection) || targetGlobalPosition.x > this.transform.position.x;
 
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;

@@ -169,8 +169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpSpeeds:
   - 2
-  - 1
-  - 1
+  - 2.5
+  - 3
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}
   _stepDistance: {x: 0.9677419, y: 0.7419355}
@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 623720683}
   - component: {fileID: 623720684}
   m_Layer: 0
-  m_Name: Character
+  m_Name: CharacterSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -429,7 +429,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 623720682}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.03225806, y: 0.4516129, z: 0}
+  m_LocalPosition: {x: -0.03225806, y: 0.1774193, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -530,6 +530,7 @@ GameObject:
   - component: {fileID: 1597697297}
   - component: {fileID: 1597697298}
   - component: {fileID: 1597697299}
+  - component: {fileID: 1597697300}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -565,6 +566,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c85ace22417664a885b84027c2c707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumperAnimator: {fileID: 1597697300}
+  jumpTriggerName: Jump
   jumperSprite: {fileID: 623720684}
   spriteFacingDirection: 0
   interactsWithTiles: 0
@@ -574,20 +577,20 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
+      inSlope: 1.1764705
+      outSlope: 1.1764705
       tangentMode: 34
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1
+      time: 0.85
       value: 1
-      inSlope: 1
-      outSlope: 1
+      inSlope: 1.1764705
+      outSlope: 1.1764705
       tangentMode: 34
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.33333334
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -605,7 +608,7 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 1
+      time: 0.85
       value: 1
       inSlope: -0.71807486
       outSlope: -0.71807486
@@ -639,6 +642,27 @@ Rigidbody2D:
   m_SleepingMode: 2
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &1597697300
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597697295}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d2d98e4d318d3894dbb5096f62062fb8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1947611969
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,7 +742,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947611969}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalPosition: {x: 0, y: 2.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
