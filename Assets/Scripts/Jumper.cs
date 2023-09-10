@@ -3,6 +3,9 @@ using UnityEngine;
 
 abstract public class Jumper : MonoBehaviour
 {
+    [SerializeField] SpriteRenderer jumperSprite;
+    [SerializeField][Tooltip("0 if is facing left, 1 to the right")] int spriteFacingDirection;
+
     [SerializeField] bool interactsWithTiles;
     protected Vector2 currentLogicalCoordinates;
 
@@ -11,6 +14,11 @@ abstract public class Jumper : MonoBehaviour
     private float jumpLerpCurrent, jumpLerpTarget;
     private Vector2 startPosition, targetPosition;
     private float currentJumpLerpSpeed;
+
+    [SerializeField] Rigidbody2D jumperRigidbody2D;
+    [SerializeField] float deatJumpForce;
+
+    bool isAlive = true;
 
     private void Start()
     {
@@ -36,6 +44,8 @@ abstract public class Jumper : MonoBehaviour
 
     private void InitializedJumper(Vector2 logicalSpawnPoint)
     {
+        isAlive = true;
+        jumperSprite.sortingOrder = 5;
         currentLogicalCoordinates.x = logicalSpawnPoint.x;
         currentLogicalCoordinates.y = logicalSpawnPoint.y;
         // todo: select the speed based on dificulty
@@ -45,6 +55,7 @@ abstract public class Jumper : MonoBehaviour
 
     private void LerpJump(Vector2 currentPosition, Vector2 targetPosition)
     {
+        if (!isAlive) return;
         lerping = true;
         if (currentPosition.y > targetPosition.y)
         {
@@ -65,6 +76,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
+        if (!isAlive) return;
         if (lerping) return;
         /*
         piramid levels:
@@ -73,30 +85,47 @@ abstract public class Jumper : MonoBehaviour
           ##### --- level 2
          */
         float piramidLevel = targetLogicalCoordinates.x + targetLogicalCoordinates.y;
-
         if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1)
         {
             FallInTheVoid(targetLogicalCoordinates);
             return;
         }
-        Transform targetBlockTransform = GameManager.sharedInstance.piramidSpawnPoint.Find($"{targetLogicalCoordinates.x}-{targetLogicalCoordinates.y}");
-
+        
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         LerpJump(this.transform.position, targetGlobalPosition);
 
         if (interactsWithTiles)
         {
+            Transform targetBlockTransform = GameManager.sharedInstance.piramidSpawnPoint.Find($"{targetLogicalCoordinates.x}-{targetLogicalCoordinates.y}");
             WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
             blockTileComponent.stepIn();
         }
 
-        //update the new logical position
+        //feedback and polish
+        // 0 && t.y > c.y = dont
+        // 1 && t.y > c.y = flip
+        jumperSprite.flipX = System.Convert.ToBoolean(spriteFacingDirection) || targetGlobalPosition.x > this.transform.position.x;
+
+        //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
     }
 
-    public virtual void FallInTheVoid(Vector2 logicalCoordinates)
+    public virtual void FallInTheVoid(Vector2 targetLogicalCoordinates)
     {
-        // todo: make and interpolation or something maybe physics
+        isAlive = false;
+        Vector3 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
+        Vector3 jumpDeadVector = ((targetGlobalPosition - this.transform.position).normalized + Vector3.up * 3).normalized;
+        jumperRigidbody2D.simulated = true;
+        jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deatJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
+        if (targetLogicalCoordinates.y < 0 || targetLogicalCoordinates.x < 0)
+            StartCoroutine(changeSortingOrderOverTime());
+        //TODO: add a sound, make the sprite blink in white, aslo a little 
+    }
+
+    IEnumerator changeSortingOrderOverTime()
+    {
+        yield return new WaitForSeconds(0.2f);
+        jumperSprite.sortingOrder = -5;
     }
 
 }
