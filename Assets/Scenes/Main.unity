@@ -617,7 +617,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   jumperRigidbody2D: {fileID: 1597697299}
-  deatJumpForce: 4.5
+  deathJumpForce: 4.5
 --- !u!50 &1597697299
 Rigidbody2D:
   serializedVersion: 4
@@ -652,7 +652,7 @@ GameObject:
   - component: {fileID: 4474345555967444726}
   - component: {fileID: 4474345555967444727}
   m_Layer: 0
-  m_Name: PiramidHead
+  m_Name: EditorPiramidBuilder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
