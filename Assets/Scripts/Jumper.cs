@@ -16,7 +16,7 @@ abstract public class Jumper : MonoBehaviour
     private float currentJumpLerpSpeed;
 
     [SerializeField] Rigidbody2D jumperRigidbody2D;
-    [SerializeField] float deatJumpForce;
+    [SerializeField] float deathJumpForce;
 
     bool isAlive = true;
 
@@ -116,7 +116,7 @@ abstract public class Jumper : MonoBehaviour
         Vector3 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         Vector3 jumpDeadVector = ((targetGlobalPosition - this.transform.position).normalized + Vector3.up * 3).normalized;
         jumperRigidbody2D.simulated = true;
-        jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deatJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
+        jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
         if (targetLogicalCoordinates.y < 0 || targetLogicalCoordinates.x < 0)
             StartCoroutine(changeSortingOrderOverTime());
         //TODO: add a sound, make the sprite blink in white, aslo a little 
