@@ -6,7 +6,7 @@ abstract public class Jumper : MonoBehaviour
     [SerializeField] Animator jumperAnimator;
     [SerializeField] string jumpTriggerName;
     [SerializeField] SpriteRenderer jumperSprite;
-    [SerializeField] [Tooltip("0 if is facing left, 1 to the right")] int spriteFacingDirection;
+    [SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
     [SerializeField] bool interactsWithTiles;
     protected Vector2 currentLogicalCoordinates;
@@ -86,14 +86,17 @@ abstract public class Jumper : MonoBehaviour
         if (lerping) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
 
-        // face direction
-        jumperSprite.flipX = System.Convert.ToBoolean(spriteFacingDirection) || targetGlobalPosition.x > this.transform.position.x;
-        if (jumperSprite.flipX)
+        // facing direction
+        if (targetGlobalPosition.x > this.transform.position.x)
         {
-            jumperSprite.transform.localPosition = new Vector3(-jumperSprite.transform.localPosition.x, jumperSprite.transform.localPosition.y, 0);
+            facingDirection = 1;
         }
-
-        jumperAnimator.SetTrigger(jumpTriggerName);
+        else
+        {
+            facingDirection = -1;
+        }
+        jumperSprite.transform.localPosition = new Vector3(Mathf.Abs(jumperSprite.transform.localPosition.x) * facingDirection, jumperSprite.transform.localPosition.y, 0);
+        jumperSprite.flipX = targetGlobalPosition.x > this.transform.position.x;
 
         /*
         piramid levels:
@@ -117,6 +120,7 @@ abstract public class Jumper : MonoBehaviour
             blockTileComponent.stepIn();
         }
 
+        jumperAnimator.SetTrigger(jumpTriggerName);
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
     }

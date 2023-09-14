@@ -569,7 +569,7 @@ MonoBehaviour:
   jumperAnimator: {fileID: 1597697300}
   jumpTriggerName: Jump
   jumperSprite: {fileID: 623720684}
-  spriteFacingDirection: 0
+  facingDirection: -1
   interactsWithTiles: 0
   jumpXCurve:
     serializedVersion: 2
