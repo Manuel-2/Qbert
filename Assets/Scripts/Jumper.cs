@@ -3,60 +3,84 @@ using UnityEngine;
 
 abstract public class Jumper : MonoBehaviour
 {
+    [Header("Behavior")]
+    [SerializeField] Vector2 logicalSpawnPoint;
+    [SerializeField] float spawnFallLenght;
+    [SerializeField] bool interactsWithTiles;
+    [Header("Movement")]
+    [SerializeField] Rigidbody2D jumperRigidbody2D;
+    [SerializeField] AnimationCurve jumpXCurve, jumpYCurve;
+    [SerializeField] float deathJumpForce;
+    [Header("Animation")]
     [SerializeField] Animator jumperAnimator;
-    [SerializeField] string jumpTriggerName;
+    [SerializeField] string airAnimationState;
+    [SerializeField]
+    [Tooltip("value between 0 and 1, defines where on the lerp the jumper should reproduce the land animation")]
+    float originalWhenLands;
     [SerializeField] SpriteRenderer jumperSprite;
     [SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
-    [SerializeField] bool interactsWithTiles;
     protected Vector2 currentLogicalCoordinates;
-
-    [SerializeField] AnimationCurve jumpXCurve, jumpYCurve;
-    private bool lerping;
-    private float jumpLerpCurrent, jumpLerpTarget;
     private Vector2 startPosition, targetPosition;
+    private float jumpLerpCurrent, jumpLerpTarget;
     private float currentJumpLerpSpeed;
+    // true when we lerp from 0 to 1, otherwise false
+    private bool normalLerpDirection;
 
-    [SerializeField] Rigidbody2D jumperRigidbody2D;
-    [SerializeField] float deathJumpForce;
-
-    bool isAlive = true;
-
-    private void Start()
-    {
-        InitializedJumper(Vector2.zero);
-    }
+    private float whenLands;
+    private bool lerping = false;
+    private bool isAlive = false;
+    private bool spawing = false;
 
     public virtual void Update()
     {
         if (lerping)
         {
-            jumpLerpCurrent = Mathf.MoveTowards(jumpLerpCurrent, jumpLerpTarget, currentJumpLerpSpeed * Time.deltaTime);
+            this.jumpLerpCurrent = Mathf.MoveTowards(this.jumpLerpCurrent, this.jumpLerpTarget, this.currentJumpLerpSpeed * Time.deltaTime);
 
             float xCurrentPosition = Mathf.LerpUnclamped(startPosition.x, targetPosition.x, jumpXCurve.Evaluate(jumpLerpCurrent));
             float yCurrentPosition = Mathf.LerpUnclamped(startPosition.y, targetPosition.y, jumpYCurve.Evaluate(jumpLerpCurrent));
             this.transform.position = new Vector3(xCurrentPosition, yCurrentPosition, 0);
 
+            if (normalLerpDirection && this.jumpLerpCurrent >= whenLands || !normalLerpDirection && this.jumpLerpCurrent <= whenLands)
+            {
+                // Reproduce the Land Animation
+                jumperAnimator.SetBool(airAnimationState, false);
+            }
+
             if (jumpLerpCurrent == jumpLerpTarget)
             {
                 lerping = false;
+                if (spawing)
+                {
+                    // Discalimer this only works because the animation of the base speed was sincronised manually with the lerp speed factor of 2
+                    // if you change the base speed, you have to re animate the character
+                    currentJumpLerpSpeed = GameManager.sharedInstance.currentJumpSpeed;
+                    jumperAnimator.speed = currentJumpLerpSpeed / GameManager.sharedInstance.jumpSpeeds[1];
+
+                    spawing = false;
+                }
             }
         }
     }
 
-    private void InitializedJumper(Vector2 logicalSpawnPoint)
+    public void InitializeJumper()
     {
         isAlive = true;
+        spawing = true;
+
+        // TODO: the gameManager desides where to put every jumper
+        //put the jumper at the top of its spawn point by the fall variable and interpolate
+        Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
+        this.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
+        currentLogicalCoordinates = logicalSpawnPoint;
+
+        // the first speed is the spawn falling speed
+        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[0];
+        LerpJump(this.transform.position, globalSpawnPointTarget);
+        // Reproduce the Jump Animation
+        jumperAnimator.SetBool(airAnimationState, true);
         jumperSprite.sortingOrder = 5;
-        currentLogicalCoordinates.x = logicalSpawnPoint.x;
-        currentLogicalCoordinates.y = logicalSpawnPoint.y;
-        // todo: select the speed based on dificulty
-        int difficultyLevel = 0;
-        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[difficultyLevel];
-        // Discalimer this only works because the animation of the base speed was sincronised manually with the lerp speed factor of 2
-        // if you change the base speed, you have to re animate the character
-        jumperAnimator.speed = currentJumpLerpSpeed / 2;
-        lerping = false;
     }
 
     private void LerpJump(Vector2 currentPosition, Vector2 targetPosition)
@@ -65,19 +89,24 @@ abstract public class Jumper : MonoBehaviour
         lerping = true;
         if (currentPosition.y > targetPosition.y)
         {
-            jumpLerpCurrent = 1;
-            jumpLerpTarget = 0;
-            startPosition = targetPosition;
+            this.jumpLerpCurrent = 1;
+            this.jumpLerpTarget = 0;
+            this.startPosition = targetPosition;
             this.targetPosition = currentPosition;
+            normalLerpDirection = false;
+            whenLands = 1 - originalWhenLands;
         }
         else
         {
             // original
-            jumpLerpCurrent = 0;
-            jumpLerpTarget = 1;
-            startPosition = currentPosition;
+            this.jumpLerpCurrent = 0;
+            this.jumpLerpTarget = 1;
+            this.startPosition = currentPosition;
             this.targetPosition = targetPosition;
+            normalLerpDirection = true;
+            whenLands = originalWhenLands;
         }
+        this.lerping = true;
     }
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
@@ -120,7 +149,7 @@ abstract public class Jumper : MonoBehaviour
             blockTileComponent.stepIn();
         }
 
-        jumperAnimator.SetTrigger(jumpTriggerName);
+        jumperAnimator.SetBool(airAnimationState, true);
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
     }
@@ -139,6 +168,7 @@ abstract public class Jumper : MonoBehaviour
 
     IEnumerator changeSortingOrderOverTime()
     {
+        //todo: change that depending on the Y value
         yield return new WaitForSeconds(0.2f);
         jumperSprite.sortingOrder = -5;
     }

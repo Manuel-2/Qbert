@@ -7,13 +7,18 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("Game Configuration")]
+    [SerializeField] Transform jumpersTopSpawn;
+    [Tooltip("0 is the fall speed on spawn")]
     public float[] jumpSpeeds;
+    public float currentJumpSpeed;
 
     [Header("PiramidContruction")]
     [SerializeField] [Min(2)] private int _piramidLevels;
     [SerializeField] Transform _piramidSpawnPoint;
     [SerializeField] Vector2 _stepDistance;
     [SerializeField] GameObject CubePrefab;
+
+    [SerializeField] GameObject[] jumpersPrefabs;
 
     public int totalPiramidLevels
     {
@@ -47,11 +52,23 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-       
+
     }
 
     private void Start()
     {
-         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
+        // todo: update the speed on every level
+        currentJumpSpeed = jumpSpeeds[1];
+        Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
+        SpawnJumper();
+    }
+
+    private void SpawnJumper()
+    {
+        // create a jumper, put it on top of its spawn point
+
+        //todo: a new fuction to select a random jumper, and send it by argument
+        GameObject newJumper = Instantiate(jumpersPrefabs[0]);
+        newJumper.GetComponent<Jumper>().InitializeJumper();
     }
 }
