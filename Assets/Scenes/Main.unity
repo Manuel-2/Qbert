@@ -174,12 +174,14 @@ MonoBehaviour:
   - 3
   - 5
   currentJumpSpeed: 0
+  spawnFallLenght: 2
+  playerPrefab: {fileID: 55858824450154798, guid: 7fb06fe3ad01ffb44a4f3de4cfa284cd, type: 3}
+  ballPrefab: {fileID: 0}
+  BallsSpawnLevel: 0
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}
   _stepDistance: {x: 0.9677419, y: 0.7419355}
   CubePrefab: {fileID: 2633070777996184519, guid: 12e482eed551689428c593dc64a16e43, type: 3}
-  jumpersPrefabs:
-  - {fileID: 55858824450154798, guid: 7fb06fe3ad01ffb44a4f3de4cfa284cd, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

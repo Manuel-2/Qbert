@@ -4,8 +4,6 @@ using UnityEngine;
 abstract public class Jumper : MonoBehaviour
 {
     [Header("Behavior")]
-    [SerializeField] Vector2 logicalSpawnPoint;
-    [SerializeField] float spawnFallLenght;
     [SerializeField] bool interactsWithTiles;
     [Header("Movement")]
     [SerializeField] Rigidbody2D jumperRigidbody2D;
@@ -64,7 +62,7 @@ abstract public class Jumper : MonoBehaviour
         }
     }
 
-    public void InitializeJumper()
+    public void InitializeJumper(Vector2 logicalSpawnPoint)
     {
         isAlive = true;
         spawing = true;
@@ -72,7 +70,7 @@ abstract public class Jumper : MonoBehaviour
         // TODO: the gameManager desides where to put every jumper
         //put the jumper at the top of its spawn point by the fall variable and interpolate
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
-        this.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
+        //this.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
         currentLogicalCoordinates = logicalSpawnPoint;
 
         // the first speed is the spawn falling speed
