@@ -177,7 +177,7 @@ MonoBehaviour:
   spawnFallLenght: 2
   playerPrefab: {fileID: 55858824450154798, guid: 7fb06fe3ad01ffb44a4f3de4cfa284cd, type: 3}
   ballPrefab: {fileID: 0}
-  BallsSpawnLevel: 0
+  BallsSpawnLevel: 1
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}
   _stepDistance: {x: 0.9677419, y: 0.7419355}

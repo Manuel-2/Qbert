@@ -7,10 +7,9 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("Game Configuration")]
-    [SerializeField] Transform jumpersTopSpawn;
+    public float currentJumpSpeed;
     [Tooltip("0 is the fall speed on spawn")]
     public float[] jumpSpeeds;
-    public float currentJumpSpeed;
 
     [Header("Jumpers")]
     [SerializeField] float spawnFallLenght;
