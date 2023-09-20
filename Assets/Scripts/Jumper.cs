@@ -126,6 +126,8 @@ abstract public class Jumper : MonoBehaviour
         }
         jumperSprite.transform.localPosition = new Vector3(Mathf.Abs(jumperSprite.transform.localPosition.x) * facingDirection, jumperSprite.transform.localPosition.y, 0);
         jumperSprite.flipX = targetGlobalPosition.x > this.transform.position.x;
+        // Reproduce the Jump Animation
+        jumperAnimator.SetBool(airAnimationState, true);
 
         /*
         piramid levels:
@@ -148,8 +150,6 @@ abstract public class Jumper : MonoBehaviour
             WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
             blockTileComponent.stepIn();
         }
-
-        jumperAnimator.SetBool(airAnimationState, true);
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
     }
