@@ -171,6 +171,8 @@ abstract public class Jumper : MonoBehaviour
         //todo: change that depending on the Y value
         yield return new WaitForSeconds(0.2f);
         jumperSprite.sortingOrder = -5;
+        // Reproduce the Land Animation
+        jumperAnimator.SetBool(airAnimationState, false);
     }
 
 }
