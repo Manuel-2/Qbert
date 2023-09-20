@@ -167,16 +167,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb3500e4ed9ba594886042085c892c17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpersTopSpawn: {fileID: 0}
+  currentJumpSpeed: 0
   jumpSpeeds:
   - 1
   - 2
   - 3
   - 5
-  currentJumpSpeed: 0
   spawnFallLenght: 2
   playerPrefab: {fileID: 55858824450154798, guid: 7fb06fe3ad01ffb44a4f3de4cfa284cd, type: 3}
-  ballPrefab: {fileID: 0}
+  ballPrefab: {fileID: 2940114466171644752, guid: aeba2b18898a67c4db538bc5a6f199dd, type: 3}
   BallsSpawnLevel: 1
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}

@@ -26,7 +26,7 @@ abstract public class Jumper : MonoBehaviour
     private bool normalLerpDirection;
 
     private float whenLands;
-    private bool lerping = false;
+    protected bool lerping = false;
     private bool isAlive = false;
     private bool spawing = false;
 

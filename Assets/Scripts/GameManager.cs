@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         currentJumpSpeed = jumpSpeeds[1];
         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
         SpawnPlayer();
-        //SpawnBallEnemy();
+        SpawnBallEnemy();
     }
 
     private void SpawnPlayer()
