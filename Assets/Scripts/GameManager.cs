@@ -7,11 +7,19 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("Game Configuration")]
-    public float currentJumpSpeed;
+    [HideInInspector] public float currentJumpSpeed;
+    private int dificulty;
+    [Tooltip("Base jump delay, match with the first jump speed")]
+    [SerializeField] float jumpDelay;
+    [HideInInspector] public float currentJumpDelay;
+    [Tooltip("1 is the original speed, this value can be 1.5, 2 etc")]
+    [HideInInspector]
+    public float currentSpeedUpFactor;
     [Tooltip("0 is the fall speed on spawn")]
     public float[] jumpSpeeds;
 
     [Header("Jumpers")]
+    [Tooltip("Delay in seconds the jumper have to wait to jump again")]
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject ballPrefab;
@@ -62,10 +70,19 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // todo: update the speed on every level
-        currentJumpSpeed = jumpSpeeds[1];
+        dificulty = 1;
+        SetGameSpeed(dificulty);
+
         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
         SpawnPlayer();
         SpawnBallEnemy();
+    }
+
+    private void SetGameSpeed(int dificultyIndex)
+    {
+        currentJumpSpeed = jumpSpeeds[dificulty++];
+        currentSpeedUpFactor = currentJumpSpeed / jumpSpeeds[1];
+        currentJumpDelay = jumpDelay / currentSpeedUpFactor;
     }
 
     private void SpawnPlayer()

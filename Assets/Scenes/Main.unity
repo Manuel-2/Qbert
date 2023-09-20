@@ -168,6 +168,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentJumpSpeed: 0
+  jumpDelay: 1
+  currentJumpDelay: 0
+  currentSpeedUpFactor: 0
   jumpSpeeds:
   - 1
   - 2

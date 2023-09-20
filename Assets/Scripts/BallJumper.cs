@@ -25,6 +25,7 @@ public class BallJumper : Jumper
 
     public override void Jump(Vector2 targetLogicalCoordinates)
     {
+        if (!canJump) return;
         base.Jump(targetLogicalCoordinates);
     }
 }

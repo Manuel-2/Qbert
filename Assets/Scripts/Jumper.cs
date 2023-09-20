@@ -27,6 +27,7 @@ abstract public class Jumper : MonoBehaviour
 
     private float whenLands;
     protected bool lerping = false;
+    protected bool canJump;
     private bool isAlive = false;
     private bool spawing = false;
 
@@ -49,13 +50,14 @@ abstract public class Jumper : MonoBehaviour
             if (jumpLerpCurrent == jumpLerpTarget)
             {
                 lerping = false;
+                StartCoroutine("makeJumpAbailable", GameManager.sharedInstance.currentJumpDelay);
+                // just at the start
                 if (spawing)
                 {
                     // Discalimer this only works because the animation of the base speed was sincronised manually with the lerp speed factor of 2
                     // if you change the base speed, you have to re animate the character
                     currentJumpLerpSpeed = GameManager.sharedInstance.currentJumpSpeed;
-                    jumperAnimator.speed = currentJumpLerpSpeed / GameManager.sharedInstance.jumpSpeeds[1];
-
+                    jumperAnimator.speed = GameManager.sharedInstance.currentSpeedUpFactor;
                     spawing = false;
                 }
             }
@@ -109,8 +111,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
-        if (!isAlive) return;
-        if (lerping) return;
+        if (!isAlive || lerping ) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
 
         // facing direction
@@ -150,6 +151,7 @@ abstract public class Jumper : MonoBehaviour
         }
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
+        canJump = false;
     }
 
     public virtual void FallInTheVoid(Vector2 targetLogicalCoordinates)
@@ -171,6 +173,12 @@ abstract public class Jumper : MonoBehaviour
         jumperSprite.sortingOrder = -5;
         // Reproduce the Land Animation
         jumperAnimator.SetBool(airAnimationState, false);
+    }
+
+    IEnumerator makeJumpAbailable(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        canJump = true;
     }
 
 }
