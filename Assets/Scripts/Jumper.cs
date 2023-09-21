@@ -62,6 +62,15 @@ abstract public class Jumper : MonoBehaviour
                 }
             }
         }
+        else if (!isAlive && jumperRigidbody2D.simulated == true)
+        {
+            Vector3 lastFloorPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(currentLogicalCoordinates);
+            if (this.transform.position.y < lastFloorPosition.y + 0.25)
+            {
+                // Reproduce the Land Animation
+                jumperAnimator.SetBool(airAnimationState, false);
+            }
+        }
     }
 
     public void InitializeJumper(Vector2 logicalSpawnPoint)
@@ -111,7 +120,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
-        if (!isAlive || lerping ) return;
+        if (!isAlive || lerping) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
 
         // facing direction
