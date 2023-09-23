@@ -1,16 +1,27 @@
 ﻿using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 
-public class UIButton : MonoBehaviour
+public class UIButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] RectTransform rectTransform;
-    [SerializeField] Button button;
+    RectTransform rectTransform;
 
-    private void OnMouseEnter()
+    private void Awake()
     {
-        rectTransform.localScale = new Vector2(10, 50);
-        Debug.Log("entro");
+        rectTransform = this.gameObject.GetComponent<RectTransform>();
+    }
+
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        rectTransform.DOShakePosition(30);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+       
     }
 }

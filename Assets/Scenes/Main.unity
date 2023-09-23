@@ -573,9 +573,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 058ae9c5fc32b4c4ca47c4542501dc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  piramidLevels: 50
+  piramidLevels: 5
   stepDistance: {x: 0.9677419, y: 0.7419355}
-  CubePrefab: {fileID: 6596358191580996312, guid: 3b20fab80993ebe4bb469a420e96f91e, type: 3}
+  CubePrefab: {fileID: 2633070777996184519, guid: 12e482eed551689428c593dc64a16e43, type: 3}
 --- !u!114 &4474345555967444728
 MonoBehaviour:
   m_ObjectHideFlags: 0
