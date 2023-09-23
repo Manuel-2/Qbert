@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Builder : MonoBehaviour
@@ -70,12 +70,14 @@ public class Builder : MonoBehaviour
     }
 
     // build the whole piramid in execution time
-    static public void BuildPiramidMap(Transform spawnPoint, int piramidLevels, Vector2 stepDistance, GameObject CubePrefab)
+    static public List<List<GameObject>> BuildPiramidMap(Transform spawnPoint, int piramidLevels, Vector2 stepDistance, GameObject CubePrefab)
     {
         Vector2 firstInLevel = spawnPoint.position;
+        List<List<GameObject>> rowsList = new List<List<GameObject>>();
 
         for (int row = 0; row < piramidLevels; row++)
         {
+            var rowBlocks = new List<GameObject>();
             for (int posInRow = 0; posInRow < row + 1; posInRow++)
             {
                 float globalX = posInRow == 0 ? firstInLevel.x : firstInLevel.x + (posInRow * stepDistance.x);
@@ -83,6 +85,7 @@ public class Builder : MonoBehaviour
                 Vector3 gloablPosition = new Vector3(globalX, globalY, 0);
 
                 GameObject currentBlock = Instantiate(CubePrefab, gloablPosition, Quaternion.identity, spawnPoint);
+                rowBlocks.Add(currentBlock);
                 WalkableTile walkableTile = currentBlock.GetComponent<WalkableTile>();
 
                 int logicalX = posInRow;
@@ -90,9 +93,11 @@ public class Builder : MonoBehaviour
                 currentBlock.name = $"{logicalX}-{logicalY}";
                 walkableTile.logicalPosition = new int[] { logicalX, logicalY };
             }
+            rowsList.Add(rowBlocks);
 
             firstInLevel.x -= stepDistance.x / 2;
             firstInLevel.y -= stepDistance.y;
         }
+        return rowsList;
     }
 }
