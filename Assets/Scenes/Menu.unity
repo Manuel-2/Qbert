@@ -815,8 +815,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470941408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.45, y: 2.04, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalPosition: {x: 2.84, y: 2.81, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -834,13 +834,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4ed7cdfc70600408336b2b57fd2e9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  piramidLevels: 7
+  piramidLevels: 10
   blockStep: {x: 0.9677419, y: 0.7419355}
-  offset: 0.25
+  offset: 0
   cubePrebaf: {fileID: 2633070777996184519, guid: 12e482eed551689428c593dc64a16e43, type: 3}
   LevelTimeOffsetInWave: 0.1
   yMovement: 1.5
-  yMovementEase: 6
+  yMovementEase: 27
   duration: 1.8
 --- !u!114 &1470941411
 MonoBehaviour:
