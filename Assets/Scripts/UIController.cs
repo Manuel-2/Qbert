@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
     public static UIController sharedInstance;
 
-    public float buttonShakeDuration, buttonShakeStreng, buttonShakeVibrato;
+    [SerializeField] UIButton[] buttons;
+    public float selectedButtonScale;
+    public float selectedButtonAnimationTime;
+    public Ease ButtonScaleEase;
+    public Color selectedButtonColor,unSelectedButtonColor;
 
     private void Awake()
     {
