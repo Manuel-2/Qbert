@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject ballPrefab;
-    [SerializeField] int BallsSpawnLevel;
+    [SerializeField] GameObject snakePrefab;
+    [SerializeField] int EnemiesSpawnLevel;
 
     [Header("PiramidContruction")]
     [SerializeField] [Min(2)] private int _piramidLevels;
@@ -54,6 +55,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Jumper player;
+
     private void Awake()
     {
         if (sharedInstance == null)
@@ -75,7 +78,7 @@ public class GameManager : MonoBehaviour
 
         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
         SpawnPlayer();
-        SpawnBallEnemy();
+        SpawnEnemy(snakePrefab);
     }
 
     private void SetGameSpeed(int dificultyIndex)
@@ -87,28 +90,32 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        // create a jumper, put it on top of its spawn point
-        //todo: a new fuction to select a random jumper, and send it by argument
         Vector2 logicalSpawnPoint = Vector2.zero;
-        SpawnJumper(playerPrefab, logicalSpawnPoint);
+        player = SpawnJumper(playerPrefab, logicalSpawnPoint);
     }
 
-    private void SpawnBallEnemy()
+    private Jumper SpawnEnemy(GameObject enemyPrefab)
     {
         bool coinFlip = Random.Range(0, 2) > 0;
-        Vector2 logicalSpawnPoint = new Vector2(0, BallsSpawnLevel);
+        Vector2 logicalSpawnPoint = new Vector2(0, EnemiesSpawnLevel);
         if (coinFlip)
         {
-            logicalSpawnPoint = new Vector2(BallsSpawnLevel, 0);
+            logicalSpawnPoint = new Vector2(EnemiesSpawnLevel, 0);
         }
-        SpawnJumper(ballPrefab, logicalSpawnPoint);
+        Jumper jumper = SpawnJumper(enemyPrefab, logicalSpawnPoint);
+        return jumper;
     }
 
-    private void SpawnJumper(GameObject jumperPrefab, Vector2 logicalSpawnPoint)
+    private Jumper SpawnJumper(GameObject jumperPrefab, Vector2 logicalSpawnPoint)
     {
+        // create a jumper, put it on top of its spawn point
+        //todo: a new fuction to select a random jumper, and send it by argument
         GameObject newJumper = Instantiate(jumperPrefab);
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
         newJumper.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
-        newJumper.GetComponent<Jumper>().InitializeJumper(logicalSpawnPoint);
+        var jumperComponent = newJumper.GetComponent<Jumper>();
+        jumperComponent.InitializeJumper(logicalSpawnPoint);
+
+        return jumperComponent;
     }
 }

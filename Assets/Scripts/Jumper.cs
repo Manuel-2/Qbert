@@ -18,7 +18,7 @@ abstract public class Jumper : MonoBehaviour
     [SerializeField] SpriteRenderer jumperSprite;
     [SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
-    protected Vector2 currentLogicalCoordinates;
+    public Vector2 currentLogicalCoordinates;
     private Vector2 startPosition, targetPosition;
     private float jumpLerpCurrent, jumpLerpTarget;
     private float currentJumpLerpSpeed;
@@ -143,8 +143,7 @@ abstract public class Jumper : MonoBehaviour
            ### --- level 1
           ##### --- level 2
          */
-        float piramidLevel = targetLogicalCoordinates.x + targetLogicalCoordinates.y;
-        if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1)
+        if (CheckForFall(targetLogicalCoordinates))
         {
             FallInTheVoid(targetLogicalCoordinates);
             return;
@@ -161,6 +160,16 @@ abstract public class Jumper : MonoBehaviour
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
         canJump = false;
+    }
+
+    public bool CheckForFall(Vector2 targetLogicalCoordinates)
+    {
+        float piramidLevel = targetLogicalCoordinates.x + targetLogicalCoordinates.y;
+        if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1)
+        {
+            return true;
+        }
+        return false;
     }
 
     public virtual void FallInTheVoid(Vector2 targetLogicalCoordinates)
