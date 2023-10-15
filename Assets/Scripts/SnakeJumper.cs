@@ -10,9 +10,11 @@ public class SnakeJumper : Jumper
         following
     }
 
+    [SerializeField] Sprite evolutionSprite;
+    [SerializeField] SpriteRenderer characterRenderer;
+
     private TargetMode curretTargetMode;
     private Jumper player;
-    private bool hasTargetCalculations;
 
     public override void Update()
     {
@@ -26,6 +28,8 @@ public class SnakeJumper : Jumper
                 {
                     curretTargetMode = TargetMode.following;
                     player = GameManager.sharedInstance.player;
+                    characterRenderer.sprite = evolutionSprite;
+                    this.facingDirections = 4;
                     return;
                 }
 
@@ -39,6 +43,7 @@ public class SnakeJumper : Jumper
                 {
                     logicalTarget.y++;
                 }
+                this.facingDirections = 0;
                 this.Jump(logicalTarget);
             }
             else if (curretTargetMode == TargetMode.following)

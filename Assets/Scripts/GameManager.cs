@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviour
         Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
         SpawnPlayer();
         SpawnEnemy(snakePrefab);
+        SpawnEnemy(ballPrefab);
     }
 
     private void SetGameSpeed(int dificultyIndex)

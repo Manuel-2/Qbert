@@ -16,7 +16,8 @@ abstract public class Jumper : MonoBehaviour
     [Tooltip("value between 0 and 1, defines where on the lerp the jumper should reproduce the land animation")]
     float originalWhenLands;
     [SerializeField] SpriteRenderer jumperSprite;
-    [SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
+    [SerializeField] Sprite[] facingDirectionSprites;
+    //[SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
     public Vector2 currentLogicalCoordinates;
     private Vector2 startPosition, targetPosition;
@@ -30,6 +31,12 @@ abstract public class Jumper : MonoBehaviour
     protected bool canJump;
     private bool isAlive = false;
     private bool spawing = false;
+    protected int facingDirections;
+
+    private void Awake()
+    {
+        facingDirections = facingDirectionSprites.Length;
+    }
 
     public virtual void Update()
     {
@@ -77,11 +84,7 @@ abstract public class Jumper : MonoBehaviour
     {
         isAlive = true;
         spawing = true;
-
-        // TODO: the gameManager desides where to put every jumper
-        //put the jumper at the top of its spawn point by the fall variable and interpolate
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
-        //this.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
         currentLogicalCoordinates = logicalSpawnPoint;
 
         // the first speed is the spawn falling speed
@@ -122,18 +125,39 @@ abstract public class Jumper : MonoBehaviour
     {
         if (!isAlive || lerping) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
-
-        // facing direction
-        if (targetGlobalPosition.x > this.transform.position.x)
+        Vector2 deltaCoordinates = targetLogicalCoordinates - currentLogicalCoordinates;
+        // | i | direction |
+        //   0 = left down
+        //   1 = right down
+        //   2 = left up
+        //   3 = right up
+        if(facingDirections == 2)
         {
-            facingDirection = 1;
-        }
-        else
+            if(deltaCoordinates.x == -1 || deltaCoordinates.y == 1)
+            {
+                jumperSprite.sprite = facingDirectionSprites[0];
+            }else if(deltaCoordinates.x == 1 || deltaCoordinates.y == -1)
+            {
+                jumperSprite.sprite = facingDirectionSprites[1];
+            }
+        }else if(facingDirections == 4)
         {
-            facingDirection = -1;
+            if(deltaCoordinates.x == 0 && deltaCoordinates.y == 1)
+            {
+                jumperSprite.sprite = facingDirectionSprites[0];
+            }else if(deltaCoordinates.x == 1 && deltaCoordinates.y == 0)
+            {
+                jumperSprite.sprite = facingDirectionSprites[1];
+            }else if(deltaCoordinates.x == 0 && deltaCoordinates.y == -1)
+            {
+                jumperSprite.sprite = facingDirectionSprites[2];
+            }
+            else if (deltaCoordinates.x == -1 && deltaCoordinates.y == 0)
+            {
+                jumperSprite.sprite = facingDirectionSprites[3];
+            }
         }
-        jumperSprite.transform.localPosition = new Vector3(Mathf.Abs(jumperSprite.transform.localPosition.x) * facingDirection, jumperSprite.transform.localPosition.y, 0);
-        jumperSprite.flipX = targetGlobalPosition.x > this.transform.position.x;
+        
         // Reproduce the Jump Animation
         jumperAnimator.SetBool(airAnimationState, true);
 
