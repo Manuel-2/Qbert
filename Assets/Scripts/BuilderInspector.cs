@@ -13,6 +13,9 @@ public class BuilderInspector : Editor
         if(GUILayout.Button("Build Piramid"))
         {
             builder.BuildPiramidMap();
+        }else if(GUILayout.Button("Build square"))
+        {
+            builder.BuildSquareMapOnEditMode();
         }
     }
 

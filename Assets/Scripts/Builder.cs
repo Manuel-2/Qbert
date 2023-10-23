@@ -9,6 +9,9 @@ public class Builder : MonoBehaviour
     [SerializeField] [Min(2)] private int piramidLevels;
     [SerializeField] Vector2 stepDistance;
     [SerializeField] GameObject CubePrefab;
+    [Header("SquareInEditorContruction")]
+    [SerializeField] [Min(2)] private int squareWidth;
+    [SerializeField] [Min(2)] private int squareHeight;
 
     WalkableTile initialCube;
 
@@ -28,6 +31,16 @@ public class Builder : MonoBehaviour
     {
         Transform piramidTopGlobalPosition = GameManager.sharedInstance.piramidSpawnPoint;
         Vector2 stepDistance = GameManager.sharedInstance.stepDistance;
+        Vector3 targetGlobalPosition = Vector3.zero;
+        targetGlobalPosition.x = (logicalCoordinates.x - logicalCoordinates.y) * stepDistance.x / 2;
+        targetGlobalPosition.y = -1 * (logicalCoordinates.x + logicalCoordinates.y) * stepDistance.y;
+        targetGlobalPosition = targetGlobalPosition + piramidTopGlobalPosition.position;
+        return targetGlobalPosition;
+    }
+
+    public Vector2 ConvertLogicalCoordinates2GlobalPosition(Vector2 logicalCoordinates, Vector2 stepDistance)
+    {
+        Transform piramidTopGlobalPosition = this.transform;
         Vector3 targetGlobalPosition = Vector3.zero;
         targetGlobalPosition.x = (logicalCoordinates.x - logicalCoordinates.y) * stepDistance.x / 2;
         targetGlobalPosition.y = -1 * (logicalCoordinates.x + logicalCoordinates.y) * stepDistance.y;
@@ -65,6 +78,21 @@ public class Builder : MonoBehaviour
                 WalkableTile currentCube = currentBlock.GetComponent<WalkableTile>();
                 currentCube.logicalPosition = new int[] { row, posInRow };
                 blockN++;
+            }
+        }
+    }
+
+    public void BuildSquareMapOnEditMode()
+    {
+        for (int row = 0; row < squareHeight; row++)
+        {
+            for (int x = 0; x < squareWidth; x++)
+            {
+                int y = row - x;
+                string blockLogicalCoordinates = $"{x},{y}";
+                Vector3 currentBlockGlobalPosition = ConvertLogicalCoordinates2GlobalPosition(new Vector2(x, y), stepDistance);
+                GameObject currentBlock = Instantiate(CubePrefab, currentBlockGlobalPosition, Quaternion.identity, this.transform);
+                currentBlock.name = blockLogicalCoordinates;
             }
         }
     }
