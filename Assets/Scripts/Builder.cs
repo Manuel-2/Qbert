@@ -13,8 +13,6 @@ public class Builder : MonoBehaviour
     [SerializeField] [Min(2)] private int squareWidth;
     [SerializeField] [Min(2)] private int squareHeight;
 
-    WalkableTile initialCube;
-
     private void Awake()
     {
         if (sharedInstance == null)
@@ -59,8 +57,7 @@ public class Builder : MonoBehaviour
         //}
 
         Vector2 firstInLevel = this.transform.position;
-        initialCube = this.gameObject.GetComponent<WalkableTile>();
-        initialCube.logicalPosition = new int[] { 0, 0 };
+        
 
         int blockN = 2;
         for (int row = 1; row < piramidLevels; row++)
@@ -75,8 +72,6 @@ public class Builder : MonoBehaviour
                 Vector3 blockPosition = new Vector3(blockX, blockY, 0);
                 GameObject currentBlock = Instantiate(CubePrefab, blockPosition, Quaternion.identity, this.transform);
                 currentBlock.name = "block" + blockN;
-                WalkableTile currentCube = currentBlock.GetComponent<WalkableTile>();
-                currentCube.logicalPosition = new int[] { row, posInRow };
                 blockN++;
             }
         }
@@ -114,12 +109,41 @@ public class Builder : MonoBehaviour
 
                 GameObject currentBlock = Instantiate(CubePrefab, gloablPosition, Quaternion.identity, spawnPoint);
                 rowBlocks.Add(currentBlock);
-                WalkableTile walkableTile = currentBlock.GetComponent<WalkableTile>();
 
                 int logicalX = posInRow;
                 int logicalY = row - posInRow;
-                currentBlock.name = $"{logicalX}-{logicalY}";
-                walkableTile.logicalPosition = new int[] { logicalX, logicalY };
+                currentBlock.name = $"{logicalX},{logicalY}";
+            }
+            rowsList.Add(rowBlocks);
+
+            firstInLevel.x -= stepDistance.x / 2;
+            firstInLevel.y -= stepDistance.y;
+        }
+        return rowsList;
+    }
+
+    static public List<List<GameObject>> BuildPiramidMap(Transform spawnPoint, int piramidLevels, Vector2 stepDistance, GameObject tilePrefab,GameObject cubePrefab)
+    {
+        Vector2 firstInLevel = spawnPoint.position;
+        List<List<GameObject>> rowsList = new List<List<GameObject>>();
+
+        for (int row = 0; row < piramidLevels; row++)
+        {
+            var rowBlocks = new List<GameObject>();
+            for (int posInRow = 0; posInRow < row + 1; posInRow++)
+            {
+                float globalX = posInRow == 0 ? firstInLevel.x : firstInLevel.x + (posInRow * stepDistance.x);
+                float globalY = firstInLevel.y;
+                Vector3 gloablPosition = new Vector3(globalX, globalY, 0);
+
+                GameObject currentTile = Instantiate(tilePrefab, gloablPosition, Quaternion.identity, spawnPoint);
+                rowBlocks.Add(currentTile);
+                // background cube
+                Instantiate(cubePrefab, gloablPosition, Quaternion.identity, currentTile.transform);
+
+                int logicalX = posInRow;
+                int logicalY = row - posInRow;
+                currentTile.name = $"{logicalX},{logicalY}";
             }
             rowsList.Add(rowBlocks);
 

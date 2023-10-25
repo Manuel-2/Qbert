@@ -1,10 +1,17 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+public enum TileInteractions
+{
+    none,
+    player,
+    reverse
+}
+
 abstract public class Jumper : MonoBehaviour
 {
     [Header("Behavior")]
-    [SerializeField] bool interactsWithTiles;
+    [SerializeField] TileInteractions tileInteraction;
     [Header("Movement")]
     [SerializeField] Rigidbody2D jumperRigidbody2D;
     [SerializeField] AnimationCurve jumpXCurve, jumpYCurve;
@@ -50,8 +57,15 @@ abstract public class Jumper : MonoBehaviour
 
             if (normalLerpDirection && this.jumpLerpCurrent >= whenLands || !normalLerpDirection && this.jumpLerpCurrent <= whenLands)
             {
-                // Reproduce the Land Animation
-                jumperAnimator.SetBool(airAnimationState, false);
+                if (jumperAnimator.GetBool(airAnimationState))
+                {
+                    // Reproduce the Land Animation
+                    jumperAnimator.SetBool(airAnimationState, false);
+                    if (tileInteraction != TileInteractions.none)
+                    {
+                        GameManager.sharedInstance.StepOnTile(currentLogicalCoordinates, tileInteraction);
+                    }
+                }
             }
 
             if (jumpLerpCurrent == jumpLerpTarget)
@@ -88,7 +102,7 @@ abstract public class Jumper : MonoBehaviour
         currentLogicalCoordinates = logicalSpawnPoint;
 
         // the first speed is the spawn falling speed
-        currentJumpLerpSpeed = GameManager.sharedInstance.jumpSpeeds[0];
+        currentJumpLerpSpeed = GameManager.sharedInstance.spawnLerpSpeed;
         LerpJump(this.transform.position, globalSpawnPointTarget);
         // Reproduce the Jump Animation
         jumperAnimator.SetBool(airAnimationState, true);
@@ -131,24 +145,28 @@ abstract public class Jumper : MonoBehaviour
         //   1 = right down
         //   2 = left up
         //   3 = right up
-        if(facingDirections == 2)
+        if (facingDirections == 2)
         {
-            if(deltaCoordinates.x == -1 || deltaCoordinates.y == 1)
+            if (deltaCoordinates.x == -1 || deltaCoordinates.y == 1)
             {
                 jumperSprite.sprite = facingDirectionSprites[0];
-            }else if(deltaCoordinates.x == 1 || deltaCoordinates.y == -1)
+            }
+            else if (deltaCoordinates.x == 1 || deltaCoordinates.y == -1)
             {
                 jumperSprite.sprite = facingDirectionSprites[1];
             }
-        }else if(facingDirections == 4)
+        }
+        else if (facingDirections == 4)
         {
-            if(deltaCoordinates.x == 0 && deltaCoordinates.y == 1)
+            if (deltaCoordinates.x == 0 && deltaCoordinates.y == 1)
             {
                 jumperSprite.sprite = facingDirectionSprites[0];
-            }else if(deltaCoordinates.x == 1 && deltaCoordinates.y == 0)
+            }
+            else if (deltaCoordinates.x == 1 && deltaCoordinates.y == 0)
             {
                 jumperSprite.sprite = facingDirectionSprites[1];
-            }else if(deltaCoordinates.x == 0 && deltaCoordinates.y == -1)
+            }
+            else if (deltaCoordinates.x == 0 && deltaCoordinates.y == -1)
             {
                 jumperSprite.sprite = facingDirectionSprites[2];
             }
@@ -157,7 +175,7 @@ abstract public class Jumper : MonoBehaviour
                 jumperSprite.sprite = facingDirectionSprites[3];
             }
         }
-        
+
         // Reproduce the Jump Animation
         jumperAnimator.SetBool(airAnimationState, true);
 
@@ -175,12 +193,6 @@ abstract public class Jumper : MonoBehaviour
 
         LerpJump(this.transform.position, targetGlobalPosition);
 
-        if (interactsWithTiles)
-        {
-            Transform targetBlockTransform = GameManager.sharedInstance.piramidSpawnPoint.Find($"{targetLogicalCoordinates.x}-{targetLogicalCoordinates.y}");
-            WalkableTile blockTileComponent = targetBlockTransform.GetComponent<WalkableTile>();
-            blockTileComponent.stepIn();
-        }
         //update the new logical position !leave at the end always
         currentLogicalCoordinates = targetLogicalCoordinates;
         canJump = false;

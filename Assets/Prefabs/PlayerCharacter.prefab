@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c85ace22417664a885b84027c2c707, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactsWithTiles: 0
+  tileInteraction: 1
   jumperRigidbody2D: {fileID: 55858824450154802}
   jumpXCurve:
     serializedVersion: 2

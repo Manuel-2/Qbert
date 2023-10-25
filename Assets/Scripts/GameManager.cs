@@ -7,18 +7,12 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("Game Configuration")]
-    [HideInInspector] public float currentJumpSpeed;
-    private int dificulty;
-    [Tooltip("Base jump delay, match with the first jump speed")]
-    [SerializeField] float jumpDelay;
-    [HideInInspector] public float currentJumpDelay;
-    [Tooltip("1 is the original speed, this value can be 1.5, 2 etc")]
-    [HideInInspector]
-    public float currentSpeedUpFactor;
-    [Tooltip("0 is the fall speed on spawn")]
-    public float[] jumpSpeeds;
+    public Level[] levelsConfig;
 
     [Header("Jumpers")]
+    [Tooltip("Base jump delay, match with the first jump speed")]
+    [SerializeField] float baseJumpDelay;
+    public float spawnLerpSpeed;
     [Tooltip("Delay in seconds the jumper have to wait to jump again")]
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
@@ -30,9 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Min(2)] private int _piramidLevels;
     [SerializeField] Transform _piramidSpawnPoint;
     [SerializeField] Vector2 _stepDistance;
-    [SerializeField] GameObject CubePrefab;
-
-
+    [SerializeField] GameObject TilePrefab, CubePrefab;
     public int totalPiramidLevels
     {
         get
@@ -55,7 +47,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Jumper player;
+
+    // Hide in the inspector
+    [HideInInspector] public Jumper player;
+    [HideInInspector] public float currentSpeedUpFactor;
+    [HideInInspector] public float currentJumpSpeed;
+    [HideInInspector] public float currentJumpDelay;
+
+    private int currentLevelIndex;
+    private Level currentLevel;
+    private List<List<GameObject>> piramidMap;
+    private int tilesCompleted;
 
     private void Awake()
     {
@@ -72,21 +74,42 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // todo: move all of this to other place
         // todo: update the speed on every level
-        dificulty = 1;
-        SetGameSpeed(dificulty);
 
-        Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, CubePrefab);
-        SpawnPlayer();
-        SpawnEnemy(snakePrefab);
-        SpawnEnemy(ballPrefab);
+
+        piramidMap = Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, TilePrefab, CubePrefab);
+        SetUpLevel(0);
+
+
+        //SpawnEnemy(snakePrefab);
+        //SpawnEnemy(ballPrefab);
     }
 
-    private void SetGameSpeed(int dificultyIndex)
+    private void SetUpLevel(int levelIndex)
     {
-        currentJumpSpeed = jumpSpeeds[dificulty++];
-        currentSpeedUpFactor = currentJumpSpeed / jumpSpeeds[1];
-        currentJumpDelay = jumpDelay / currentSpeedUpFactor;
+        currentLevelIndex = levelIndex;
+        currentLevel = levelsConfig[currentLevelIndex];
+        SetGameSpeed(currentLevelIndex);
+        tilesCompleted = 0;
+        SpawnPlayer();
+
+        piramidMap.ForEach(delegate (List<GameObject> row)
+        {
+            row.ForEach(delegate (GameObject piramidTile)
+            {
+                piramidTile.GetComponent<SpriteRenderer>().color = currentLevel.tileColors[0];
+                SpriteRenderer piramidCubeRenderer = piramidTile.transform.GetChild(0).GetComponent<SpriteRenderer>();
+                piramidCubeRenderer.color = currentLevel.blockColor;
+            });
+        });
+    }
+
+    private void SetGameSpeed(int levelIndex)
+    {
+        currentJumpSpeed = levelsConfig[levelIndex].lerpSpeed;
+        currentSpeedUpFactor = currentJumpSpeed / levelsConfig[0].lerpSpeed;
+        currentJumpDelay = baseJumpDelay / currentSpeedUpFactor;
     }
 
     private void SpawnPlayer()
@@ -110,7 +133,9 @@ public class GameManager : MonoBehaviour
     private Jumper SpawnJumper(GameObject jumperPrefab, Vector2 logicalSpawnPoint)
     {
         // create a jumper, put it on top of its spawn point
-        //todo: a new fuction to select a random jumper, and send it by argument
+        //todo: a new fuction to select a random jumper
+        //todo: The gameManager interpolates the jumper position at spawn(the fall), don't use the jumper's jump interpolator
+
         GameObject newJumper = Instantiate(jumperPrefab);
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
         newJumper.transform.position = new Vector3(globalSpawnPointTarget.x, globalSpawnPointTarget.y + spawnFallLenght);
@@ -118,5 +143,60 @@ public class GameManager : MonoBehaviour
         jumperComponent.InitializeJumper(logicalSpawnPoint);
 
         return jumperComponent;
+    }
+
+    public void StepOnTile(Vector2 logicalCoordinates, TileInteractions interactionType)
+    {
+        int rowMapIndex = (int)logicalCoordinates.x + (int)logicalCoordinates.y;
+        GameObject currentTile = piramidMap[rowMapIndex][(int)logicalCoordinates.x];
+        SpriteRenderer tileSpriteRenderer = currentTile.GetComponent<SpriteRenderer>();
+
+        if (interactionType == TileInteractions.player)
+        {
+            Color currentTileColor = tileSpriteRenderer.color;
+            int tileColorIndex = findColorIndexOnTile(currentTileColor);
+            if (tileColorIndex == -1)
+            {
+                Debug.LogError("current tile color is outside of posible colors");
+            }
+            if (currentLevel.tileBehavior == TileBehavior.simpleBiColor || currentLevel.tileBehavior == TileBehavior.simpleTriColor)
+            {
+                if (tileColorIndex != currentLevel.tileColors.Length - 1)
+                {
+                    tileColorIndex++;
+                }
+
+            }
+            else if (currentLevel.tileBehavior == TileBehavior.reversibleBiColor || currentLevel.tileBehavior == TileBehavior.reversibleTriColor)
+            {
+                if (tileColorIndex == currentLevel.tileColors.Length - 1)
+                {
+                    tileColorIndex--;
+                    tilesCompleted--;
+                }
+                else
+                {
+                    tileColorIndex++;
+                }
+            }
+
+            tileSpriteRenderer.color = currentLevel.tileColors[tileColorIndex];
+            if (tileColorIndex == currentLevel.tileColors.Length - 1)
+            {
+                tilesCompleted++;
+            }
+        }
+    }
+
+    private int findColorIndexOnTile(Color currentColor)
+    {
+        for (int i = 0; i < currentLevel.tileColors.Length; i++)
+        {
+            if (currentColor == currentLevel.tileColors[i])
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }
