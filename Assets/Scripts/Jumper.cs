@@ -132,7 +132,6 @@ abstract public class Jumper : MonoBehaviour
             normalLerpDirection = true;
             whenLands = originalWhenLands;
         }
-        this.lerping = true;
     }
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
