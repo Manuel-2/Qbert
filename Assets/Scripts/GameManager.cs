@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
 
 
         piramidMap = Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, TilePrefab, CubePrefab);
-        SetUpLevel(0);
+        SetUpLevel(1);
 
 
         //SpawnEnemy(snakePrefab);

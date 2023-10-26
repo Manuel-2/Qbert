@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelsConfig:
   - {fileID: 11400000, guid: 571781c4c7e34844b802d4a97e459ab0, type: 2}
+  - {fileID: 11400000, guid: 7d88ac693cf246a49ad28522286bc6d5, type: 2}
   baseJumpDelay: 0.5
   spawnLerpSpeed: 1
   spawnFallLenght: 2
