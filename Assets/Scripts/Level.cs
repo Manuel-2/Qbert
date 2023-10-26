@@ -8,5 +8,6 @@ public class Level : ScriptableObject
     public TileBehavior tileBehavior;
     public Color[] tileColors;
     public Color blockColor;
+    public int platforms;
     public float lerpSpeed;
 }

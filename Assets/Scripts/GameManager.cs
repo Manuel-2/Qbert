@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform _piramidSpawnPoint;
     [SerializeField] Vector2 _stepDistance;
     [SerializeField] GameObject TilePrefab, CubePrefab;
+    [SerializeField] GameObject platformPrefab;
+
     public int totalPiramidLevels
     {
         get
@@ -58,6 +60,7 @@ public class GameManager : MonoBehaviour
     private Level currentLevel;
     private List<List<GameObject>> piramidMap;
     private int tilesCompleted;
+    private List<Platform> currentPlatforms;
 
     private void Awake()
     {
@@ -82,7 +85,7 @@ public class GameManager : MonoBehaviour
         SetUpLevel(0);
 
 
-        SpawnEnemy(snakePrefab);
+        //SpawnEnemy(snakePrefab);
         //SpawnEnemy(ballPrefab);
     }
 
@@ -94,6 +97,24 @@ public class GameManager : MonoBehaviour
         tilesCompleted = 0;
         SpawnPlayer();
 
+        // spawn platforms
+        currentPlatforms = new List<Platform>();
+        if(currentLevel.platforms > _piramidLevels *2 - 2)
+        {
+            string errorMessage = $"Level: {currentLevelIndex} has platform overflow. the max platform posible is: {_piramidLevels * 2 - 2}";
+            Debug.LogError(errorMessage);
+            return;
+        }
+        for (int i = 0; i < currentLevel.platforms; i++)
+        {
+            Vector2 platformLogicalCoordinate = generatePlatformPosition();
+            Vector2 platformPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(platformLogicalCoordinate);
+            var newPlatform = Instantiate(platformPrefab, platformPosition, Quaternion.identity, _piramidSpawnPoint).GetComponent<Platform>();
+            newPlatform.loogicalCoordinates = platformLogicalCoordinate;
+            currentPlatforms.Add(newPlatform);
+        }
+
+        //paint the piramid
         piramidMap.ForEach(delegate (List<GameObject> row)
         {
             row.ForEach(delegate (GameObject piramidTile)
@@ -103,6 +124,26 @@ public class GameManager : MonoBehaviour
                 piramidCubeRenderer.color = currentLevel.blockColor;
             });
         });
+    }
+
+    private Vector2 generatePlatformPosition()
+    {
+        int pos = Random.Range(1, _piramidLevels);
+        Vector2 platformLogicalCoordinate = new Vector2(-1, pos);
+        bool coinFlip = Random.Range(0, 2) > 0;
+        if (coinFlip) platformLogicalCoordinate = new Vector2(pos, -1);
+
+        if (currentPlatforms.Count > 0)
+        {
+            foreach (var platform in currentPlatforms)
+            {
+                if (platformLogicalCoordinate == platform.loogicalCoordinates)
+                {
+                    return generatePlatformPosition();
+                }
+            }
+        }
+        return platformLogicalCoordinate;
     }
 
     private void SetGameSpeed(int levelIndex)
