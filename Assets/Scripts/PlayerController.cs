@@ -39,5 +39,6 @@ public class PlayerController : Jumper
     public override void Jump(Vector2 targetLogicalCoordinates)
     {
         base.Jump(targetLogicalCoordinates);
+        GameManager.sharedInstance.playerLogicalCoordinates = targetLogicalCoordinates;
     }
 }

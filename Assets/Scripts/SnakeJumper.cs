@@ -14,7 +14,7 @@ public class SnakeJumper : Jumper
     [SerializeField] SpriteRenderer characterRenderer;
 
     private TargetMode curretTargetMode;
-    private Jumper player;
+    private Vector2 playerLoogicalCoordinates;
 
     public override void Update()
     {
@@ -27,7 +27,7 @@ public class SnakeJumper : Jumper
                 if (currentLogicalCoordinates.x + currentLogicalCoordinates.y == lastLevel)
                 {
                     curretTargetMode = TargetMode.following;
-                    player = GameManager.sharedInstance.player;
+                    
                     characterRenderer.sprite = evolutionSprite;
                     this.facingDirections = 4;
                     return;
@@ -51,7 +51,8 @@ public class SnakeJumper : Jumper
                 bool coinFlip = Random.Range(0, 2) > 0;
                 Vector2 logicalTarget = currentLogicalCoordinates;
 
-                var yDifference = (player.currentLogicalCoordinates.y - currentLogicalCoordinates.y);
+                playerLoogicalCoordinates = GameManager.sharedInstance.playerLogicalCoordinates;
+                var yDifference = (playerLoogicalCoordinates.y - currentLogicalCoordinates.y);
                 if (yDifference != 0)
                 {
                     yDifference = yDifference / Mathf.Abs(yDifference);
@@ -59,7 +60,7 @@ public class SnakeJumper : Jumper
                 Vector2 testLogicalTargetY = new Vector2(currentLogicalCoordinates.x, currentLogicalCoordinates.y + yDifference);
                 bool fallsOnYMove = CheckForFall(testLogicalTargetY);
 
-                var xDifference = (player.currentLogicalCoordinates.x - currentLogicalCoordinates.x);
+                var xDifference = (playerLoogicalCoordinates.x - currentLogicalCoordinates.x);
                 if (xDifference != 0)
                 {
                     xDifference = xDifference / Mathf.Abs(xDifference);

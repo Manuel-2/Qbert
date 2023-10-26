@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
 
     // Hide in the inspector
-    [HideInInspector] public Jumper player;
+    [HideInInspector] public Vector2 playerLogicalCoordinates;
     [HideInInspector] public float currentSpeedUpFactor;
     [HideInInspector] public float currentJumpSpeed;
     [HideInInspector] public float currentJumpDelay;
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
         SetUpLevel(0);
 
 
-        //SpawnEnemy(snakePrefab);
+        SpawnEnemy(snakePrefab);
         //SpawnEnemy(ballPrefab);
     }
 
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour
     private void SpawnPlayer()
     {
         Vector2 logicalSpawnPoint = Vector2.zero;
-        player = SpawnJumper(playerPrefab, logicalSpawnPoint);
+        playerLogicalCoordinates = SpawnJumper(playerPrefab, logicalSpawnPoint).currentLogicalCoordinates;
     }
 
     private Jumper SpawnEnemy(GameObject enemyPrefab)
