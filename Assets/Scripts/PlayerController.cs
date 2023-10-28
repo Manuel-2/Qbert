@@ -30,7 +30,7 @@ public class PlayerController : Jumper
         {
             nextLogicalCoordinates.x += 1;
         }
-        if( nextLogicalCoordinates != currentLogicalCoordinates)
+        if (nextLogicalCoordinates != currentLogicalCoordinates)
         {
             Jump(nextLogicalCoordinates);
         }
@@ -38,7 +38,7 @@ public class PlayerController : Jumper
 
     public override void Jump(Vector2 targetLogicalCoordinates)
     {
+        if (this.onPlatform) return;
         base.Jump(targetLogicalCoordinates);
-        GameManager.sharedInstance.playerLogicalCoordinates = targetLogicalCoordinates;
     }
 }

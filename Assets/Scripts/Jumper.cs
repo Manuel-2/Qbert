@@ -39,6 +39,7 @@ abstract public class Jumper : MonoBehaviour
     private bool isAlive = false;
     private bool spawing = false;
     protected int facingDirections;
+    protected bool onPlatform = false;
 
     private void Awake()
     {
@@ -61,7 +62,7 @@ abstract public class Jumper : MonoBehaviour
                 {
                     // Reproduce the Land Animation
                     jumperAnimator.SetBool(airAnimationState, false);
-                    if (tileInteraction != TileInteractions.none)
+                    if (tileInteraction != TileInteractions.none && !onPlatform)
                     {
                         GameManager.sharedInstance.StepOnTile(currentLogicalCoordinates, tileInteraction);
                     }
@@ -71,7 +72,14 @@ abstract public class Jumper : MonoBehaviour
             if (jumpLerpCurrent == jumpLerpTarget)
             {
                 lerping = false;
-                StartCoroutine("makeJumpAbailable", GameManager.sharedInstance.currentJumpDelay);
+                if (onPlatform)
+                {
+                    // paltform as a father
+                }
+                else
+                {
+                    StartCoroutine("makeJumpAbailable", GameManager.sharedInstance.currentJumpDelay);
+                }
                 // just at the start
                 if (spawing)
                 {
@@ -98,6 +106,7 @@ abstract public class Jumper : MonoBehaviour
     {
         isAlive = true;
         spawing = true;
+        onPlatform = false;
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
         currentLogicalCoordinates = logicalSpawnPoint;
 
@@ -184,10 +193,18 @@ abstract public class Jumper : MonoBehaviour
            ### --- level 1
           ##### --- level 2
          */
+
         if (CheckForFall(targetLogicalCoordinates))
         {
-            FallInTheVoid(targetLogicalCoordinates);
-            return;
+            if (tileInteraction == TileInteractions.player && GameManager.sharedInstance.Check4SavePlatform(targetLogicalCoordinates))
+            {
+                onPlatform = true;
+            }
+            else
+            {
+                FallInTheVoid(targetLogicalCoordinates);
+                return;
+            }
         }
 
         LerpJump(this.transform.position, targetGlobalPosition);
@@ -196,6 +213,8 @@ abstract public class Jumper : MonoBehaviour
         currentLogicalCoordinates = targetLogicalCoordinates;
         canJump = false;
     }
+
+
 
     public bool CheckForFall(Vector2 targetLogicalCoordinates)
     {
@@ -206,7 +225,6 @@ abstract public class Jumper : MonoBehaviour
         }
         return false;
     }
-
     public virtual void FallInTheVoid(Vector2 targetLogicalCoordinates)
     {
         isAlive = false;

@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
 
 
     // Hide in the inspector
-    [HideInInspector] public Vector2 playerLogicalCoordinates;
+    [HideInInspector] public Jumper playerJumper;
     [HideInInspector] public float currentSpeedUpFactor;
     [HideInInspector] public float currentJumpSpeed;
     [HideInInspector] public float currentJumpDelay;
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         SetUpLevel(0);
 
 
-        //SpawnEnemy(snakePrefab);
+        SpawnEnemy(snakePrefab);
         //SpawnEnemy(ballPrefab);
     }
 
@@ -146,6 +146,19 @@ public class GameManager : MonoBehaviour
         return platformLogicalCoordinate;
     }
 
+    public bool Check4SavePlatform(Vector2 targetLogicalCoordinates)
+    {
+        foreach (Platform platform in currentPlatforms)
+        {
+            if (platform.loogicalCoordinates == targetLogicalCoordinates)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void SetGameSpeed(int levelIndex)
     {
         currentJumpSpeed = levelsConfig[levelIndex].lerpSpeed;
@@ -156,7 +169,7 @@ public class GameManager : MonoBehaviour
     private void SpawnPlayer()
     {
         Vector2 logicalSpawnPoint = Vector2.zero;
-        playerLogicalCoordinates = SpawnJumper(playerPrefab, logicalSpawnPoint).currentLogicalCoordinates;
+        playerJumper = SpawnJumper(playerPrefab, logicalSpawnPoint);
     }
 
     private Jumper SpawnEnemy(GameObject enemyPrefab)
@@ -185,7 +198,8 @@ public class GameManager : MonoBehaviour
 
         return jumperComponent;
     }
-
+    
+    //todo: StepOnTile needs to check if all tiles were completed
     public void StepOnTile(Vector2 logicalCoordinates, TileInteractions interactionType)
     {
         int rowMapIndex = (int)logicalCoordinates.x + (int)logicalCoordinates.y;

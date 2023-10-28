@@ -14,7 +14,7 @@ public class SnakeJumper : Jumper
     [SerializeField] SpriteRenderer characterRenderer;
 
     private TargetMode curretTargetMode;
-    private Vector2 playerLoogicalCoordinates;
+    private Jumper playerJumper;
 
     public override void Update()
     {
@@ -27,7 +27,7 @@ public class SnakeJumper : Jumper
                 if (currentLogicalCoordinates.x + currentLogicalCoordinates.y == lastLevel)
                 {
                     curretTargetMode = TargetMode.following;
-                    
+
                     characterRenderer.sprite = evolutionSprite;
                     this.facingDirections = 4;
                     return;
@@ -49,10 +49,10 @@ public class SnakeJumper : Jumper
             else if (curretTargetMode == TargetMode.following)
             {
                 bool coinFlip = Random.Range(0, 2) > 0;
-                Vector2 logicalTarget = currentLogicalCoordinates;
+                Vector2 logicalTarget = this.currentLogicalCoordinates;
 
-                playerLoogicalCoordinates = GameManager.sharedInstance.playerLogicalCoordinates;
-                var yDifference = (playerLoogicalCoordinates.y - currentLogicalCoordinates.y);
+                playerJumper = GameManager.sharedInstance.playerJumper;
+                var yDifference = (playerJumper.currentLogicalCoordinates.y - currentLogicalCoordinates.y);
                 if (yDifference != 0)
                 {
                     yDifference = yDifference / Mathf.Abs(yDifference);
@@ -60,7 +60,7 @@ public class SnakeJumper : Jumper
                 Vector2 testLogicalTargetY = new Vector2(currentLogicalCoordinates.x, currentLogicalCoordinates.y + yDifference);
                 bool fallsOnYMove = CheckForFall(testLogicalTargetY);
 
-                var xDifference = (playerLoogicalCoordinates.x - currentLogicalCoordinates.x);
+                var xDifference = (playerJumper.currentLogicalCoordinates.x - currentLogicalCoordinates.x);
                 if (xDifference != 0)
                 {
                     xDifference = xDifference / Mathf.Abs(xDifference);
@@ -100,6 +100,15 @@ public class SnakeJumper : Jumper
                         }
                     }
                 }
+
+                if (logicalTarget == this.currentLogicalCoordinates && CheckForFall(playerJumper.currentLogicalCoordinates))
+                {
+                    if (xDifference == 0 || yDifference == 0)
+                    {
+                        logicalTarget = playerJumper.currentLogicalCoordinates;
+                    }
+                }
+
                 this.Jump(logicalTarget);
             }
         }
