@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("Base jump delay, match with the first jump speed")]
     [SerializeField] float baseJumpDelay;
     public float spawnLerpSpeed;
+    public float platformSpeed;
     [Tooltip("Delay in seconds the jumper have to wait to jump again")]
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Vector2 _stepDistance;
     [SerializeField] GameObject TilePrefab, CubePrefab;
     [SerializeField] GameObject platformPrefab;
+    public float platformYOffset;
 
     public int totalPiramidLevels
     {
@@ -61,6 +63,9 @@ public class GameManager : MonoBehaviour
     private List<List<GameObject>> piramidMap;
     private int tilesCompleted;
     private List<Platform> currentPlatforms;
+    private Platform activePlatform;
+    private bool enemiesSpawning;
+    private List<Jumper> currentEnemies;
 
     private void Awake()
     {
@@ -79,8 +84,7 @@ public class GameManager : MonoBehaviour
     {
         // todo: move all of this to other place
         // todo: update the speed on every level
-
-
+        enemiesSpawning = false;
         piramidMap = Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, TilePrefab, CubePrefab);
         SetUpLevel(0);
 
@@ -95,6 +99,7 @@ public class GameManager : MonoBehaviour
         currentLevel = levelsConfig[currentLevelIndex];
         SetGameSpeed(currentLevelIndex);
         tilesCompleted = 0;
+        currentEnemies = new List<Jumper>();
         SpawnPlayer();
 
         // spawn platforms
@@ -107,8 +112,9 @@ public class GameManager : MonoBehaviour
         }
         for (int i = 0; i < currentLevel.platforms; i++)
         {
-            Vector2 platformLogicalCoordinate = generatePlatformPosition();
+            Vector2 platformLogicalCoordinate = generatePlatformCoordinates();
             Vector2 platformPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(platformLogicalCoordinate);
+            //platformPosition.y += platformYOffset;
             var newPlatform = Instantiate(platformPrefab, platformPosition, Quaternion.identity, _piramidSpawnPoint).GetComponent<Platform>();
             newPlatform.loogicalCoordinates = platformLogicalCoordinate;
             currentPlatforms.Add(newPlatform);
@@ -126,7 +132,7 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    private Vector2 generatePlatformPosition()
+    private Vector2 generatePlatformCoordinates()
     {
         int pos = Random.Range(1, _piramidLevels);
         Vector2 platformLogicalCoordinate = new Vector2(-1, pos);
@@ -139,24 +145,23 @@ public class GameManager : MonoBehaviour
             {
                 if (platformLogicalCoordinate == platform.loogicalCoordinates)
                 {
-                    return generatePlatformPosition();
+                    return generatePlatformCoordinates();
                 }
             }
         }
         return platformLogicalCoordinate;
     }
 
-    public bool Check4SavePlatform(Vector2 targetLogicalCoordinates)
+    public Platform Check4SavePlatform(Vector2 targetLogicalCoordinates)
     {
         foreach (Platform platform in currentPlatforms)
         {
             if (platform.loogicalCoordinates == targetLogicalCoordinates)
             {
-                return true;
+                return platform;
             }
         }
-
-        return false;
+        return null;
     }
 
     private void SetGameSpeed(int levelIndex)
@@ -181,6 +186,7 @@ public class GameManager : MonoBehaviour
             logicalSpawnPoint = new Vector2(EnemiesSpawnLevel, 0);
         }
         Jumper jumper = SpawnJumper(enemyPrefab, logicalSpawnPoint);
+        currentEnemies.Add(jumper);
         return jumper;
     }
 
@@ -253,5 +259,36 @@ public class GameManager : MonoBehaviour
             }
         }
         return -1;
+    }
+
+    public void ActivateRainbowPlatform(Platform currentPlatform)
+    {
+        playerJumper.transform.parent = currentPlatform.transform;
+        enemiesSpawning = false;
+        currentPlatform.ActivatePlatform();
+        activePlatform = currentPlatform;
+    }
+
+    public void EndRainbowPlatform()
+    {
+        Platform platform2Delete = activePlatform;
+        activePlatform = null;
+        currentPlatforms.Remove(platform2Delete);
+        playerJumper.jumpOffRainbowPlatform();
+        //kill remaining enemies
+        foreach (Jumper enemy in currentEnemies)
+        {
+            //TODO: kill the enemies one by one, not all in the same frame
+            DestroyEntity(enemy.gameObject);
+        }
+        currentEnemies.Clear();
+
+        DestroyEntity(platform2Delete.gameObject);
+    }
+
+    private void DestroyEntity(GameObject entity)
+    {
+        //TODO: add particles
+        GameObject.Destroy(entity);
     }
 }

@@ -39,7 +39,7 @@ abstract public class Jumper : MonoBehaviour
     private bool isAlive = false;
     private bool spawing = false;
     protected int facingDirections;
-    protected bool onPlatform = false;
+    protected Platform currentPlatform;
 
     private void Awake()
     {
@@ -62,7 +62,7 @@ abstract public class Jumper : MonoBehaviour
                 {
                     // Reproduce the Land Animation
                     jumperAnimator.SetBool(airAnimationState, false);
-                    if (tileInteraction != TileInteractions.none && !onPlatform)
+                    if (tileInteraction != TileInteractions.none && currentPlatform == null)
                     {
                         GameManager.sharedInstance.StepOnTile(currentLogicalCoordinates, tileInteraction);
                     }
@@ -72,9 +72,17 @@ abstract public class Jumper : MonoBehaviour
             if (jumpLerpCurrent == jumpLerpTarget)
             {
                 lerping = false;
-                if (onPlatform)
+                if (currentPlatform != null)
                 {
-                    // paltform as a father
+                    GameManager.sharedInstance.ActivateRainbowPlatform(this.currentPlatform);
+                    if (currentPlatform.loogicalCoordinates.x == -1)
+                    {
+                        jumperSprite.sprite = facingDirectionSprites[0];
+                    }
+                    else if(currentPlatform.loogicalCoordinates.y == -1)
+                    {
+                        jumperSprite.sprite = facingDirectionSprites[0];
+                    }
                 }
                 else
                 {
@@ -106,7 +114,7 @@ abstract public class Jumper : MonoBehaviour
     {
         isAlive = true;
         spawing = true;
-        onPlatform = false;
+        currentPlatform = null;
         Vector3 globalSpawnPointTarget = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(logicalSpawnPoint);
         currentLogicalCoordinates = logicalSpawnPoint;
 
@@ -196,11 +204,13 @@ abstract public class Jumper : MonoBehaviour
 
         if (CheckForFall(targetLogicalCoordinates))
         {
-            if (tileInteraction == TileInteractions.player && GameManager.sharedInstance.Check4SavePlatform(targetLogicalCoordinates))
+            if (tileInteraction == TileInteractions.player)
             {
-                onPlatform = true;
+                currentPlatform = GameManager.sharedInstance.Check4SavePlatform(targetLogicalCoordinates);
+                targetGlobalPosition = currentPlatform.floorPivot.position;
             }
-            else
+            
+            if(currentPlatform == null)
             {
                 FallInTheVoid(targetLogicalCoordinates);
                 return;
@@ -214,7 +224,12 @@ abstract public class Jumper : MonoBehaviour
         canJump = false;
     }
 
-
+    public void jumpOffRainbowPlatform()
+    {
+        transform.parent = null;
+        currentPlatform = null;
+        Jump(Vector2.zero);
+    }
 
     public bool CheckForFall(Vector2 targetLogicalCoordinates)
     {

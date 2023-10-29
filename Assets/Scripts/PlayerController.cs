@@ -38,7 +38,7 @@ public class PlayerController : Jumper
 
     public override void Jump(Vector2 targetLogicalCoordinates)
     {
-        if (this.onPlatform) return;
+        if (this.currentPlatform) return;
         base.Jump(targetLogicalCoordinates);
     }
 }
