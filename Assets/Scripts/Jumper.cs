@@ -79,7 +79,7 @@ abstract public class Jumper : MonoBehaviour
                     {
                         jumperSprite.sprite = facingDirectionSprites[0];
                     }
-                    else if(currentPlatform.loogicalCoordinates.y == -1)
+                    else if (currentPlatform.loogicalCoordinates.y == -1)
                     {
                         jumperSprite.sprite = facingDirectionSprites[0];
                     }
@@ -207,10 +207,13 @@ abstract public class Jumper : MonoBehaviour
             if (tileInteraction == TileInteractions.player)
             {
                 currentPlatform = GameManager.sharedInstance.Check4SavePlatform(targetLogicalCoordinates);
-                targetGlobalPosition = currentPlatform.floorPivot.position;
+                if (currentPlatform != null)
+                {
+                    targetGlobalPosition = currentPlatform.floorPivot.position;
+                }
             }
-            
-            if(currentPlatform == null)
+
+            if (currentPlatform == null)
             {
                 FallInTheVoid(targetLogicalCoordinates);
                 return;
