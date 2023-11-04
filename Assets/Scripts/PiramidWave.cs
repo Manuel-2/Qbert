@@ -21,7 +21,7 @@ public class PiramidWave : MonoBehaviour
 
     private void Start()
     {
-        rowLists = Builder.BuildPiramidMap(this.transform,piramidLevels,new Vector2(blockStep.x + offset,blockStep.y + offset),cubePrebaf);
+        rowLists = Builder.BuildPiramidMap(this.transform, piramidLevels, new Vector2(blockStep.x + offset, blockStep.y + offset), cubePrebaf);
         StartCoroutine("LateralWaveAnimation");
     }
 
@@ -30,7 +30,7 @@ public class PiramidWave : MonoBehaviour
         yield return new WaitForSeconds(duration);
         for (int rowLevel = 0; rowLevel < piramidLevels; rowLevel++)
         {
-            foreach(GameObject block in rowLists[rowLevel])
+            foreach (GameObject block in rowLists[rowLevel])
             {
                 block.transform.DOLocalMoveY(block.transform.localPosition.y + yMovement, duration).SetLoops(-1, LoopType.Yoyo).SetEase(yMovementEase);
                 block.transform.DOScale(0.9f, duration).SetLoops(-1, LoopType.Yoyo).SetEase(yMovementEase);
@@ -42,12 +42,20 @@ public class PiramidWave : MonoBehaviour
     IEnumerator LateralWaveAnimation()
     {
         yield return new WaitForSeconds(duration);
-        for (int y = piramidLevels - 1; y >=  0; y--)
+        for (int y = piramidLevels - 1; y >= 0; y--)
         {
-            for(int x = 0; x <= piramidLevels - 1 - y; x++)
+            for (int x = 0; x <= piramidLevels - 1 - y; x++)
             {
-                Transform block = this.transform.Find($"{x}-{y}");
-                block.DOLocalMoveY(block.transform.localPosition.y + yMovement, duration).SetLoops(-1, LoopType.Yoyo).SetEase(yMovementEase);
+                Transform block = this.transform.Find($"{x},{y}");
+                if (block != null)
+                {
+                    block.DOLocalMoveY(block.transform.localPosition.y + yMovement, duration).SetLoops(-1, LoopType.Yoyo).SetEase(yMovementEase);
+
+                }
+                else
+                {
+                    Debug.LogError("can not find a cube in the piramid to animate");
+                }
             }
             yield return new WaitForSeconds(LevelTimeOffsetInWave);
         }

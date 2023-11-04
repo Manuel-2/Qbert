@@ -1628,7 +1628,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1470941408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.84, y: 2.12, z: 0}
+  m_LocalPosition: {x: 2.84, y: 2.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1651,10 +1651,10 @@ MonoBehaviour:
   blockStep: {x: 0.9677419, y: 0.7419355}
   offset: 0
   cubePrebaf: {fileID: 2633070777996184519, guid: 12e482eed551689428c593dc64a16e43, type: 3}
-  LevelTimeOffsetInWave: 0.1
-  yMovement: 1.5
-  yMovementEase: 27
-  duration: 1.8
+  LevelTimeOffsetInWave: 0.3
+  yMovement: 0.8
+  yMovementEase: 4
+  duration: 1.65
 --- !u!114 &1470941411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,6 +1670,8 @@ MonoBehaviour:
   piramidLevels: 2
   stepDistance: {x: 0, y: 0}
   CubePrefab: {fileID: 0}
+  squareWidth: 0
+  squareHeight: 0
 --- !u!1 &1651147950
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9f5b2a5f3df8643b63b15a8e435833, type: 3}
   m_Name: Level1Data
   m_EditorClassIdentifier: 
-  tileBehavior: 3
+  tileBehavior: 0
   tileColors:
   - {r: 0.8509804, g: 0.6431373, b: 0.30980393, a: 1}
   - {r: 0.42601904, g: 0.7735849, b: 0.31016377, a: 1}
