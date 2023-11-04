@@ -102,6 +102,7 @@ public class GameManager : MonoBehaviour
         currentEnemies = new List<Jumper>();
         SpawnPlayer();
 
+        //TODO: detroy previus platforms when gameComplete
         // spawn platforms
         currentPlatforms = new List<Platform>();
         if(currentLevel.platforms > _piramidLevels *2 - 2)
