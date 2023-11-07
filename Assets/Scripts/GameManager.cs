@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
         // todo: update the speed on every level
         piramidMap = Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, TilePrefab, CubePrefab);
         score = 0;
-        lives = 4;
+        lives = 3;
         StartCoroutine("BallsSpawnCicle");
         SetUpLevel(0);
     }
@@ -227,7 +227,6 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        lives--;
         Vector2 logicalSpawnPoint = Vector2.zero;
         playerJumper = SpawnJumper(playerPrefab, logicalSpawnPoint);
     }
@@ -413,6 +412,8 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDied()
     {
+        //TODO: just a trick to stop the player jumping delete later!!!
+        levelCompleted = true;
         enemiesSpawning = false;
         if (currentEnemies != null)
         {
@@ -432,6 +433,7 @@ public class GameManager : MonoBehaviour
         else
         {
             //game over
+            Debug.Log("gameOver");
         }
 
     }
@@ -479,6 +481,12 @@ public class GameManager : MonoBehaviour
     {
         //play a sound;
         yield return new WaitForSeconds(3f);
+        if(playerJumper != null)
+        {
+            Destroy(playerJumper.gameObject);
+        }
+        //TODO: just a trick to stop the player jumping delete later!!!
+        levelCompleted = false;
         SpawnPlayer();
         enemiesSpawning = true;
     }
