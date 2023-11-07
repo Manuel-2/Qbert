@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerController : Jumper
 {
-
     public override void Update()
     {
         base.Update();

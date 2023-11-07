@@ -5,7 +5,8 @@ public enum TileInteractions
 {
     none,
     player,
-    reverse
+    reverse,
+    snake
 }
 
 abstract public class Jumper : MonoBehaviour
@@ -153,7 +154,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
-        if (!isAlive || lerping) return;
+        if (!isAlive || lerping || GameManager.sharedInstance.levelCompleted) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         Vector2 deltaCoordinates = targetLogicalCoordinates - currentLogicalCoordinates;
         // | i | direction |
@@ -250,9 +251,24 @@ abstract public class Jumper : MonoBehaviour
         Vector3 jumpDeadVector = ((targetGlobalPosition - this.transform.position).normalized + Vector3.up * 3).normalized;
         jumperRigidbody2D.simulated = true;
         jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
+        if (tileInteraction == TileInteractions.snake)
+        {
+            GameManager.sharedInstance.AddScore(500);
+            GameManager.sharedInstance.snakeOnGame = false;
+        }else if(tileInteraction == TileInteractions.player)
+        {
+            GameManager.sharedInstance.PlayerDied();
+        }
+        
+        if(tileInteraction != TileInteractions.player)
+        {
+            GameManager.sharedInstance.EnemyDied(this);
+        }
+        Destroy(this.gameObject, 4f);
         if (targetLogicalCoordinates.y < 0 || targetLogicalCoordinates.x < 0)
             StartCoroutine(changeSortingOrderOverTime());
         //TODO: add a sound, make the sprite blink in white, aslo a little 
+
     }
 
     IEnumerator changeSortingOrderOverTime()
