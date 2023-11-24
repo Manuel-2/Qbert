@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   courtainTransform: {fileID: 949344216879226204}
-  transitionDuration: 3
+  transitionDuration: 1.5
   animationCurve: 16
   outXPosition: -1920
   inXPosition: 910

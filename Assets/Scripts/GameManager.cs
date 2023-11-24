@@ -36,7 +36,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float colorChangeSpeed;
     [SerializeField] Color[] levelCompleteAnimationColors;
     [SerializeField] AudioClip levelCompleteMusic;
-
+    [SerializeField] AudioClip playerDeathAudioClip;
+    [Space]
+    [SerializeField] AudioSource backgroundAudioSource;
     [Header("UI")]
     [SerializeField] TextMeshProUGUI scoreTextField;
 
@@ -117,6 +119,7 @@ public class GameManager : MonoBehaviour
             Destroy(playerJumper.gameObject);
 
         }
+        backgroundAudioSource.Play();
 
         enemiesSpawning = true;
         snakeOnGame = false;
@@ -261,6 +264,7 @@ public class GameManager : MonoBehaviour
 
     private void LevelComplete()
     {
+        backgroundAudioSource.Pause();
         enemiesSpawning = false;
         levelCompleted = true;
         //TODO: animation change color of all tiles, play win sound, wait and set up the next level
@@ -414,6 +418,7 @@ public class GameManager : MonoBehaviour
     {
         //TODO: just a trick to stop the player jumping delete later!!!
         levelCompleted = true;
+        audioSource.PlayOneShot(playerDeathAudioClip);
         enemiesSpawning = false;
         if (currentEnemies != null)
         {
@@ -432,10 +437,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            //game over
-            Debug.Log("gameOver");
+            InGameUIController.sharedInstance.ShowGameoverScreen();
         }
-
     }
 
     private void DestroyEntity(GameObject entity)

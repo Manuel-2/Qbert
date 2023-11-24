@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 [CustomEditor(typeof(Builder))]
-public class BuilderInspector : Editor
+public class BuilderInspector : UnityEditor.Editor
 {
     public override void OnInspectorGUI()
     {

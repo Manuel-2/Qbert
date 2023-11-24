@@ -32,6 +32,7 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 60;
         selectedButtonIndex = 2;
         buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
     }

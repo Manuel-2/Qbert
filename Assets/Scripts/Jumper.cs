@@ -25,6 +25,9 @@ abstract public class Jumper : MonoBehaviour
     float originalWhenLands;
     [SerializeField] SpriteRenderer jumperSprite;
     [SerializeField] Sprite[] facingDirectionSprites;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip jumpAudioClip;
+    [SerializeField] AudioClip jumperDeath;
     //[SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
     public Vector2 currentLogicalCoordinates;
@@ -224,6 +227,7 @@ abstract public class Jumper : MonoBehaviour
         LerpJump(this.transform.position, targetGlobalPosition);
 
         //update the new logical position !leave at the end always
+        audioSource.PlayOneShot(jumpAudioClip);
         currentLogicalCoordinates = targetLogicalCoordinates;
         canJump = false;
     }
@@ -253,6 +257,7 @@ abstract public class Jumper : MonoBehaviour
         jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
         if (tileInteraction == TileInteractions.snake)
         {
+            audioSource.PlayOneShot(jumperDeath);
             GameManager.sharedInstance.AddScore(500);
             GameManager.sharedInstance.snakeOnGame = false;
         }else if(tileInteraction == TileInteractions.player)
