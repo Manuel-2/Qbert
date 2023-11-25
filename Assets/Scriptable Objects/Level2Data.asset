@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9f5b2a5f3df8643b63b15a8e435833, type: 3}
   m_Name: Level2Data
   m_EditorClassIdentifier: 
-  tileBehavior: 1
+  tileBehavior: 2
   tileColors:
   - {r: 0.41960788, g: 0.72716516, b: 1, a: 1}
   - {r: 0.8962264, g: 0.26633143, b: 0.5580442, a: 1}
   - {r: 0.3054391, g: 0.8980392, b: 0.26666662, a: 1}
   blockColor: {r: 0.3924729, g: 0.19215684, b: 0.8, a: 1}
+  platforms: 0
   lerpSpeed: 2
