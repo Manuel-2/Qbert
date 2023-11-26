@@ -416,7 +416,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerDied()
     {
-        //TODO: just a trick to stop the player jumping delete later!!!
+        // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;
         audioSource.PlayOneShot(playerDeathAudioClip);
         enemiesSpawning = false;
@@ -424,7 +424,6 @@ public class GameManager : MonoBehaviour
         {
             foreach (Jumper enemy in currentEnemies)
             {
-                //Debug.Log(enemy.gameObject.name);
                 Destroy(enemy.gameObject);
             }
             currentEnemies.Clear();
@@ -488,7 +487,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(playerJumper.gameObject);
         }
-        //TODO: just a trick to stop the player jumping delete later!!!
+        // this revets the changes on PlayerDiedMetoh on LevelCompleted
         levelCompleted = false;
         SpawnPlayer();
         enemiesSpawning = true;

@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class PlayerController : Jumper
 {
+    private bool colided;
+
+    private void Start()
+    {
+        colided = false;
+    }
+
     public override void Update()
     {
         base.Update();
@@ -39,5 +46,17 @@ public class PlayerController : Jumper
     {
         if (this.currentPlatform) return;
         base.Jump(targetLogicalCoordinates);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (!colided)
+            {
+                colided = true;
+                GameManager.sharedInstance.PlayerDied();
+            }
+        }
     }
 }
