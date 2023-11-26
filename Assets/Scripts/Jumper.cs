@@ -263,15 +263,14 @@ abstract public class Jumper : MonoBehaviour
             GameManager.sharedInstance.EnemyDied(this);
         }
         Destroy(this.gameObject, 4f);
-        if (targetLogicalCoordinates.y < 0 || targetLogicalCoordinates.x < 0)
-            StartCoroutine(changeSortingOrderOverTime());
+        StartCoroutine(changeSortingOrderOverTime());
     }
 
     IEnumerator changeSortingOrderOverTime()
     {
-        //todo: change that depending on the Y value
         yield return new WaitForSeconds(0.2f);
-        jumperSprite.sortingOrder = -5;
+        if (currentLogicalCoordinates.x < 0 || currentLogicalCoordinates.y < 0)
+            jumperSprite.sortingOrder = -5;
         // Reproduce the Land Animation
         jumperAnimator.SetBool(airAnimationState, false);
     }
