@@ -58,5 +58,10 @@ public class PlayerController : Jumper
                 GameManager.sharedInstance.PlayerDied();
             }
         }
+        else if (collision.gameObject.CompareTag("Troll"))
+        {
+            GameManager.sharedInstance.EnemyDied(collision.gameObject.GetComponent<Jumper>());
+            Destroy(collision.gameObject);
+        }
     }
 }

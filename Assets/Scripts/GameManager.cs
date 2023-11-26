@@ -18,8 +18,7 @@ public class GameManager : MonoBehaviour
     [Tooltip("Delay in seconds the jumper have to wait to jump again")]
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] GameObject ballPrefab;
-    [SerializeField] GameObject snakePrefab;
+    [SerializeField] GameObject[] Jumpers;
     [SerializeField] int EnemiesSpawnLevel;
 
     [Header("PiramidContruction")]
@@ -239,7 +238,7 @@ public class GameManager : MonoBehaviour
             logicalSpawnPoint = new Vector2(EnemiesSpawnLevel, 0);
         }
         Jumper jumper = SpawnJumper(enemyPrefab, logicalSpawnPoint);
-        if(enemyPrefab.name == "EnemySnake")
+        if (enemyPrefab.name == "EnemySnake")
         {
             snakeOnGame = true;
         }
@@ -302,16 +301,17 @@ public class GameManager : MonoBehaviour
 
     public void StepOnTile(Vector2 logicalCoordinates, TileInteractions interactionType)
     {
-        if (levelCompleted) return;
+        if (levelCompleted || interactionType == TileInteractions.snake) return;
         int rowMapIndex = (int)logicalCoordinates.x + (int)logicalCoordinates.y;
         GameObject currentTile = piramidMap[rowMapIndex][(int)logicalCoordinates.x];
         SpriteRenderer tileSpriteRenderer = currentTile.GetComponent<SpriteRenderer>();
 
+        Color currentTileColor = tileSpriteRenderer.color;
+        int tileColorIndex = findColorIndexOnTile(currentTileColor);
+        int originalTileColorIndex = tileColorIndex;
+
         if (interactionType == TileInteractions.player)
         {
-            Color currentTileColor = tileSpriteRenderer.color;
-            int tileColorIndex = findColorIndexOnTile(currentTileColor);
-            int originalTileColorIndex = tileColorIndex;
             if (tileColorIndex == -1)
             {
                 Debug.LogError("current tile color is outside of posible colors");
@@ -347,6 +347,18 @@ public class GameManager : MonoBehaviour
                 {
                     LevelComplete();
                 }
+            }
+        }
+        else if (interactionType == TileInteractions.reverse)
+        {
+            if (tileColorIndex > 0)
+            {
+                if (tileColorIndex == currentLevel.tileColors.Length - 1)
+                {
+                    tilesCompleted--;
+                }
+                tileColorIndex--;
+                tileSpriteRenderer.color = currentLevel.tileColors[tileColorIndex];
             }
         }
     }
@@ -451,22 +463,16 @@ public class GameManager : MonoBehaviour
             if (enemiesSpawning)
             {
                 // change this if you add more enemies,generate a random index an select the prefab on an Array
-                bool coinFlip = Random.Range(0, 2) > 0;
-                if (coinFlip)
+                int jumper2SpawnIndex = -1;
+                if (snakeOnGame)
                 {
-                    SpawnEnemy(ballPrefab);
+                    jumper2SpawnIndex = Random.Range(1, Jumpers.Length);
                 }
                 else
                 {
-                    if (snakeOnGame)
-                    {
-                        SpawnEnemy(ballPrefab);
-                    }
-                    else
-                    {
-                        SpawnEnemy(snakePrefab);
-                    }
+                    jumper2SpawnIndex = Random.Range(0, Jumpers.Length);
                 }
+                SpawnEnemy(Jumpers[jumper2SpawnIndex]);
             }
             yield return new WaitForSeconds(currentLevel.spawnDelay);
         }
