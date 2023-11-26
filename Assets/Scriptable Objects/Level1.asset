@@ -12,16 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a9f5b2a5f3df8643b63b15a8e435833, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: 
-  tileBehavior: 2
+  tileBehavior: 0
   tileColors:
   - {r: 0.8509804, g: 0.6431373, b: 0.30980393, a: 1}
   - {r: 0.42601904, g: 0.7735849, b: 0.31016377, a: 1}
-<<<<<<< HEAD:Assets/Scriptable Objects/Level1Data.asset
-  - {r: 0.77254903, g: 0.3802584, b: 0.30980393, a: 1}
-  blockColor: {r: 0.8509804, g: 0.6431373, b: 0.30980393, a: 1}
-=======
   blockColor: {r: 0.6792453, g: 0.48837015, b: 0.25952297, a: 1}
->>>>>>> fastDev:Assets/Scriptable Objects/Level1.asset
   platforms: 3
   lerpSpeed: 2.3
   spawnBallMinDelay: 5
