@@ -170,8 +170,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelsConfig:
   - {fileID: 11400000, guid: 571781c4c7e34844b802d4a97e459ab0, type: 2}
+  - {fileID: 11400000, guid: e3c2f6dce7fe02f4d9642f3fff347355, type: 2}
+  - {fileID: 11400000, guid: 04a2d5f7f63ebaf4a8f5005e0893f535, type: 2}
   - {fileID: 11400000, guid: 0fc9f0d3dc181a447a1494a596d72bfd, type: 2}
-  - {fileID: 11400000, guid: b64613bf5877a754bb189e92fbe1d9c4, type: 2}
+  - {fileID: 11400000, guid: 651695af2875b684ca838aa5db067996, type: 2}
+  - {fileID: 11400000, guid: a1fcbe2e8dfbed84abdf9677042d54d2, type: 2}
+  - {fileID: 11400000, guid: 3d6f2ee629e62264abf034ff64081309, type: 2}
+  - {fileID: 11400000, guid: a64f45f0e18b1c54f9b88ff1f399e88c, type: 2}
+  - {fileID: 11400000, guid: a3a75d34ccb51a34da6b2cfa64f40df3, type: 2}
+  - {fileID: 11400000, guid: 7d88b6d563a998e4d9001577f3a6e700, type: 2}
+  - {fileID: 11400000, guid: cd17e5984d59964419fc1645ca44f953, type: 2}
+  - {fileID: 11400000, guid: be53fa58d1302814bbe242087e806cad, type: 2}
   baseJumpDelay: 0.5
   spawnLerpSpeed: 1
   platformSpeed: 1

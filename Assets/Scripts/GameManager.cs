@@ -103,12 +103,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // todo: move all of this to other place
-        // todo: update the speed on every level
+        currentLevel = levelsConfig[0];
+        StartSpawnCicle();
         piramidMap = Builder.BuildPiramidMap(_piramidSpawnPoint, _piramidLevels, _stepDistance, TilePrefab, CubePrefab);
         score = 0;
         lives = 3;
-        StartCoroutine("BallsSpawnCicle");
         SetUpLevel(0);
     }
 
@@ -121,7 +120,7 @@ public class GameManager : MonoBehaviour
         }
         backgroundAudioSource.Play();
 
-        enemiesSpawning = true;
+        StartCoroutine("ReactivateEnemysSpawn");
         snakeOnGame = false;
         levelCompleted = false;
         tilesCompleted = 0;
@@ -165,10 +164,6 @@ public class GameManager : MonoBehaviour
 
     private void CleanSceneFromObjects()
     {
-        //if (playerJumper != null)
-        //{
-        //    Destroy(playerJumper.gameObject);
-        //}
         if (currentEnemies != null)
         {
             AddScore(currentEnemies.Count * 500);
@@ -232,6 +227,7 @@ public class GameManager : MonoBehaviour
     {
         Vector2 logicalSpawnPoint = Vector2.zero;
         playerJumper = SpawnJumper(playerPrefab, logicalSpawnPoint);
+        StartCoroutine("ReactivateEnemysSpawn");
     }
 
     private Jumper SpawnEnemy(GameObject enemyPrefab)
@@ -243,6 +239,10 @@ public class GameManager : MonoBehaviour
             logicalSpawnPoint = new Vector2(EnemiesSpawnLevel, 0);
         }
         Jumper jumper = SpawnJumper(enemyPrefab, logicalSpawnPoint);
+        if(enemyPrefab.name == "EnemySnake")
+        {
+            snakeOnGame = true;
+        }
         currentEnemies.Add(jumper);
         return jumper;
     }
@@ -262,41 +262,20 @@ public class GameManager : MonoBehaviour
         return jumperComponent;
     }
 
+    public void StartSpawnCicle()
+    {
+        StartCoroutine("SpawnCicle");
+    }
+
     private void LevelComplete()
     {
         backgroundAudioSource.Pause();
         enemiesSpawning = false;
         levelCompleted = true;
-        //TODO: animation change color of all tiles, play win sound, wait and set up the next level
         StartCoroutine("LevelCompleteTilesAnimation");
         audioSource.PlayOneShot(levelCompleteMusic);
         CleanSceneFromObjects();
-
-        //todo: count platforms and add points to them
     }
-
-    IEnumerator LevelCompleteTilesAnimation()
-    {
-        float currentTime = 0;
-        int colorIndex = 0;
-        while (currentTime <= levelCompleteAnimationDuration)
-        {
-            ChangeAllTilesColorEfect(levelCompleteAnimationColors[colorIndex]);
-            yield return new WaitForSeconds(1 / colorChangeSpeed);
-            currentTime += 1 / colorChangeSpeed;
-            if (colorIndex == levelCompleteAnimationColors.Length - 1)
-            {
-                colorIndex = 0;
-            }
-            else
-            {
-                colorIndex++;
-            }
-        }
-        ChangeAllTilesColorEfect(Color.white);
-        SetUpLevel(currentLevelIndex + 1);
-    }
-
 
     private void ChangeAllTilesColorEfect(Color color)
     {
@@ -368,10 +347,6 @@ public class GameManager : MonoBehaviour
                 {
                     LevelComplete();
                 }
-                else if (tilesCompleted == 3)
-                {
-                    SpawnSnake();
-                }
             }
         }
     }
@@ -409,7 +384,7 @@ public class GameManager : MonoBehaviour
             DestroyEntity(enemy.gameObject);
         }
         currentEnemies.Clear();
-        enemiesSpawning = true;
+        StartCoroutine("ReactivateEnemysSpawn");
         snakeOnGame = false;
         DestroyEntity(platform2Delete.gameObject);
     }
@@ -418,6 +393,7 @@ public class GameManager : MonoBehaviour
     {
         // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;
+
         audioSource.PlayOneShot(playerDeathAudioClip);
         enemiesSpawning = false;
         if (currentEnemies != null)
@@ -446,36 +422,53 @@ public class GameManager : MonoBehaviour
         GameObject.Destroy(entity);
     }
 
-    IEnumerator BallsSpawnCicle()
+    IEnumerator LevelCompleteTilesAnimation()
     {
-        yield return new WaitForSeconds(1f);
-        while (true)
+        float currentTime = 0;
+        int colorIndex = 0;
+        while (currentTime <= levelCompleteAnimationDuration)
         {
-            float spawnDelay = Random.Range(currentLevel.spawnBallMinDelay, currentLevel.spawnBallMaxDelay + 1);
-            yield return new WaitForSeconds(spawnDelay);
-            if (enemiesSpawning)
+            ChangeAllTilesColorEfect(levelCompleteAnimationColors[colorIndex]);
+            yield return new WaitForSeconds(1 / colorChangeSpeed);
+            currentTime += 1 / colorChangeSpeed;
+            if (colorIndex == levelCompleteAnimationColors.Length - 1)
             {
-                SpawnEnemy(ballPrefab);
+                colorIndex = 0;
+            }
+            else
+            {
+                colorIndex++;
             }
         }
+        ChangeAllTilesColorEfect(Color.white);
+        SetUpLevel(currentLevelIndex + 1);
     }
 
-    public void SpawnSnake()
-    {
-        StartCoroutine("SnakeSpawnCicle");
-    }
-
-    IEnumerator SnakeSpawnCicle()
+    IEnumerator SpawnCicle()
     {
         while (true)
         {
-            float spawnDelay = Random.Range(currentLevel.spawnSnakeMinDelay, currentLevel.spawnSnakeMaxDelay + 1);
-            yield return new WaitForSeconds(spawnDelay);
-            if (snakeOnGame == false && enemiesSpawning)
+            if (enemiesSpawning)
             {
-                SpawnEnemy(snakePrefab);
-                snakeOnGame = true;
+                // change this if you add more enemies,generate a random index an select the prefab on an Array
+                bool coinFlip = Random.Range(0, 2) > 0;
+                if (coinFlip)
+                {
+                    SpawnEnemy(ballPrefab);
+                }
+                else
+                {
+                    if (snakeOnGame)
+                    {
+                        SpawnEnemy(ballPrefab);
+                    }
+                    else
+                    {
+                        SpawnEnemy(snakePrefab);
+                    }
+                }
             }
+            yield return new WaitForSeconds(currentLevel.spawnDelay);
         }
     }
 
@@ -483,13 +476,18 @@ public class GameManager : MonoBehaviour
     {
         //play a sound;
         yield return new WaitForSeconds(3f);
-        if(playerJumper != null)
+        if (playerJumper != null)
         {
             Destroy(playerJumper.gameObject);
         }
         // this revets the changes on PlayerDiedMetoh on LevelCompleted
         levelCompleted = false;
         SpawnPlayer();
+    }
+
+    IEnumerator ReactivateEnemysSpawn()
+    {
+        yield return new WaitForSeconds(2f);
         enemiesSpawning = true;
     }
 }
