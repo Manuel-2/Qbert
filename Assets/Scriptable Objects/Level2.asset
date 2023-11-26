@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a9f5b2a5f3df8643b63b15a8e435833, type: 3}
+  m_Name: Level2
+  m_EditorClassIdentifier: 
+  tileBehavior: 1
+  tileColors:
+  - {r: 0.8509804, g: 0.30980396, b: 0.6336236, a: 1}
+  - {r: 0.48588786, g: 0.3304112, b: 0.9339623, a: 1}
+  - {r: 0.367567, g: 0.9622642, b: 0.27687788, a: 1}
+  blockColor: {r: 0.690388, g: 0.49733, b: 0.8301887, a: 1}
+  platforms: 3
+  lerpSpeed: 2.3
+  spawnBallMinDelay: 3
+  spawnBallMaxDelay: 5
+  spawnSnakeMinDelay: 5
+  spawnSnakeMaxDelay: 6

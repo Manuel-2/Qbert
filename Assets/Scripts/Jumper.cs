@@ -5,7 +5,8 @@ public enum TileInteractions
 {
     none,
     player,
-    reverse
+    reverse,
+    snake
 }
 
 abstract public class Jumper : MonoBehaviour
@@ -24,6 +25,9 @@ abstract public class Jumper : MonoBehaviour
     float originalWhenLands;
     [SerializeField] SpriteRenderer jumperSprite;
     [SerializeField] Sprite[] facingDirectionSprites;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip jumpAudioClip;
+    [SerializeField] AudioClip jumperDeath;
     //[SerializeField] [Tooltip("-1 if is facing left, 1 to the right")] int facingDirection;
 
     public Vector2 currentLogicalCoordinates;
@@ -44,6 +48,7 @@ abstract public class Jumper : MonoBehaviour
     private void Awake()
     {
         facingDirections = facingDirectionSprites.Length;
+        jumperRigidbody2D.gravityScale = 0;
     }
 
     public virtual void Update()
@@ -99,15 +104,6 @@ abstract public class Jumper : MonoBehaviour
                 }
             }
         }
-        else if (!isAlive && jumperRigidbody2D.simulated == true)
-        {
-            Vector3 lastFloorPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(currentLogicalCoordinates);
-            if (this.transform.position.y < lastFloorPosition.y + 0.25)
-            {
-                // Reproduce the Land Animation
-                jumperAnimator.SetBool(airAnimationState, false);
-            }
-        }
     }
 
     public void InitializeJumper(Vector2 logicalSpawnPoint)
@@ -153,7 +149,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Jump(Vector2 targetLogicalCoordinates)
     {
-        if (!isAlive || lerping) return;
+        if (!isAlive || lerping || GameManager.sharedInstance.levelCompleted) return;
         Vector2 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         Vector2 deltaCoordinates = targetLogicalCoordinates - currentLogicalCoordinates;
         // | i | direction |
@@ -223,6 +219,7 @@ abstract public class Jumper : MonoBehaviour
         LerpJump(this.transform.position, targetGlobalPosition);
 
         //update the new logical position !leave at the end always
+        audioSource.PlayOneShot(jumpAudioClip);
         currentLogicalCoordinates = targetLogicalCoordinates;
         canJump = false;
     }
@@ -237,22 +234,37 @@ abstract public class Jumper : MonoBehaviour
     public bool CheckForFall(Vector2 targetLogicalCoordinates)
     {
         float piramidLevel = targetLogicalCoordinates.x + targetLogicalCoordinates.y;
-        if (targetLogicalCoordinates.x < 0 || targetLogicalCoordinates.y < 0 || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1)
-        {
-            return true;
-        }
-        return false;
+        return targetLogicalCoordinates.x < 0
+            || targetLogicalCoordinates.y < 0
+            || piramidLevel > GameManager.sharedInstance.totalPiramidLevels - 1;
     }
     public virtual void FallInTheVoid(Vector2 targetLogicalCoordinates)
     {
         isAlive = false;
         Vector3 targetGlobalPosition = Builder.sharedInstance.ConvertLogicalCoordinates2GlobalPosition(targetLogicalCoordinates);
         Vector3 jumpDeadVector = ((targetGlobalPosition - this.transform.position).normalized + Vector3.up * 3).normalized;
-        jumperRigidbody2D.simulated = true;
+        // the rigidbody is activated by default but it has 0 gravity, when the player falls of it gets a gravity scale of 1
+        jumperRigidbody2D.gravityScale = 1;
+
         jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
+        if (tileInteraction == TileInteractions.snake)
+        {
+            audioSource.PlayOneShot(jumperDeath);
+            GameManager.sharedInstance.AddScore(500);
+            GameManager.sharedInstance.snakeOnGame = false;
+        }
+        else if (tileInteraction == TileInteractions.player)
+        {
+            GameManager.sharedInstance.PlayerDied();
+        }
+
+        if (tileInteraction != TileInteractions.player)
+        {
+            GameManager.sharedInstance.EnemyDied(this);
+        }
+        Destroy(this.gameObject, 4f);
         if (targetLogicalCoordinates.y < 0 || targetLogicalCoordinates.x < 0)
             StartCoroutine(changeSortingOrderOverTime());
-        //TODO: add a sound, make the sprite blink in white, aslo a little 
     }
 
     IEnumerator changeSortingOrderOverTime()

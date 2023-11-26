@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class PlayerController : Jumper
 {
+    private bool colided;
+
+    private void Start()
+    {
+        colided = false;
+    }
 
     public override void Update()
     {
@@ -13,20 +19,20 @@ public class PlayerController : Jumper
     private void ReadInput()
     {
         Vector2 nextLogicalCoordinates = currentLogicalCoordinates;
-        if (Input.GetKeyDown(KeyCode.Keypad7))
+        if (Input.GetKeyDown(KeyCode.Keypad7) || Input.GetKeyDown(KeyCode.Q))
         {
             // up right
             nextLogicalCoordinates.x -= 1;
         }
-        else if (Input.GetKeyDown(KeyCode.Keypad8))
+        else if (Input.GetKeyDown(KeyCode.Keypad8) || Input.GetKeyDown(KeyCode.W))
         {
             nextLogicalCoordinates.y -= 1;
         }
-        else if (Input.GetKeyDown(KeyCode.Keypad4))
+        else if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.A))
         {
             nextLogicalCoordinates.y += 1;
         }
-        else if (Input.GetKeyDown(KeyCode.Keypad5))
+        else if (Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.S))
         {
             nextLogicalCoordinates.x += 1;
         }
@@ -40,5 +46,17 @@ public class PlayerController : Jumper
     {
         if (this.currentPlatform) return;
         base.Jump(targetLogicalCoordinates);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            if (!colided)
+            {
+                colided = true;
+                GameManager.sharedInstance.PlayerDied();
+            }
+        }
     }
 }

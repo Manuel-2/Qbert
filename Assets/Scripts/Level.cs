@@ -10,4 +10,6 @@ public class Level : ScriptableObject
     public Color blockColor;
     public int platforms;
     public float lerpSpeed;
+    public float spawnBallMinDelay, spawnBallMaxDelay;
+    public float spawnSnakeMinDelay, spawnSnakeMaxDelay;
 }

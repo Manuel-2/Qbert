@@ -50,7 +50,6 @@ public class PiramidWave : MonoBehaviour
                 if (block != null)
                 {
                     block.DOLocalMoveY(block.transform.localPosition.y + yMovement, duration).SetLoops(-1, LoopType.Yoyo).SetEase(yMovementEase);
-
                 }
                 else
                 {

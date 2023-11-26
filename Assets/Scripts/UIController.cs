@@ -13,6 +13,8 @@ public class UIController : MonoBehaviour
     public float selectedButtonAnimationTime;
     public Ease ButtonScaleEase;
     public Color selectedButtonColor, unSelectedButtonColor;
+    [Header("Scene indexs")]
+    [SerializeField] int playScene;
 
     private int selectedButtonIndex;
 
@@ -30,6 +32,7 @@ public class UIController : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 60;
         selectedButtonIndex = 2;
         buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
     }
@@ -78,7 +81,7 @@ public class UIController : MonoBehaviour
 
     public void ClickPlay()
     {
-        Debug.Log("play");
+        TransitionManager.sharedInstance.LoadScene(playScene);
     }
 
     public void ClickSettings()
