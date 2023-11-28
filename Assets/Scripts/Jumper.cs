@@ -249,28 +249,31 @@ abstract public class Jumper : MonoBehaviour
         jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
         if (tileInteraction == TileInteractions.snake)
         {
-            audioSource.PlayOneShot(jumperDeath);
             GameManager.sharedInstance.AddScore(500);
             GameManager.sharedInstance.snakeOnGame = false;
         }
         else if (tileInteraction == TileInteractions.player)
         {
-            GameManager.sharedInstance.PlayerDied();
+            GameManager.sharedInstance.KillPlayer();
         }
 
         if (tileInteraction != TileInteractions.player)
         {
             GameManager.sharedInstance.EnemyDied(this);
         }
+        audioSource.PlayOneShot(jumperDeath);
         Destroy(this.gameObject, 4f);
         StartCoroutine(changeSortingOrderOverTime());
+        StartCoroutine(blinkSprite(.4f));
     }
 
     IEnumerator changeSortingOrderOverTime()
     {
         yield return new WaitForSeconds(0.2f);
-        if (currentLogicalCoordinates.x < 0 || currentLogicalCoordinates.y < 0)
+        if (currentLogicalCoordinates.x + currentLogicalCoordinates.y != 6)
+        {
             jumperSprite.sortingOrder = -5;
+        }
         // Reproduce the Land Animation
         jumperAnimator.SetBool(airAnimationState, false);
     }
@@ -279,6 +282,15 @@ abstract public class Jumper : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         canJump = true;
+    }
+
+    IEnumerator blinkSprite(float blinkDuration)
+    {
+        yield return new WaitForSeconds(0.25f);
+        var spriteMaterial = jumperSprite.material;
+        spriteMaterial.SetFloat("_FlashAmount", 1);
+        yield return new WaitForSeconds(blinkDuration);
+        spriteMaterial.SetFloat("_FlashAmount", 0);
     }
 
 }

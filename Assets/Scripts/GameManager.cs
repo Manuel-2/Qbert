@@ -401,7 +401,7 @@ public class GameManager : MonoBehaviour
         DestroyEntity(platform2Delete.gameObject);
     }
 
-    public void PlayerDied()
+    public void KillPlayer()
     {
         // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;

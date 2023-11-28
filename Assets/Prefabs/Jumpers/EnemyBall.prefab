@@ -52,7 +52,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 59a2a8415afd77543b2a90556f8bccac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
   facingDirectionSprites: []
   audioSource: {fileID: 3260237995500588280}
   jumpAudioClip: {fileID: 8300000, guid: 9540e364fa540a542899f7de5e182a9d, type: 3}
-  jumperDeath: {fileID: 8300000, guid: a70690f4a5c411246ac5865c4257b0de, type: 3}
+  jumperDeath: {fileID: 8300000, guid: 9540e364fa540a542899f7de5e182a9d, type: 3}
   currentLogicalCoordinates: {x: 0, y: 0}
 --- !u!50 &2940114466171644765
 Rigidbody2D:

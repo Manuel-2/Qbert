@@ -55,7 +55,7 @@ public class PlayerController : Jumper
             if (!colided)
             {
                 colided = true;
-                GameManager.sharedInstance.PlayerDied();
+                GameManager.sharedInstance.KillPlayer();
             }
         }
         else if (collision.gameObject.CompareTag("Troll"))

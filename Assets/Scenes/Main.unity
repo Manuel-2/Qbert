@@ -190,6 +190,7 @@ MonoBehaviour:
   - {fileID: 2940114466171644752, guid: 9eaa0cabe40709c438526f25fdd44a5d, type: 3}
   - {fileID: 2940114466171644752, guid: aeba2b18898a67c4db538bc5a6f199dd, type: 3}
   - {fileID: 2940114466171644752, guid: 43cbca4e6ed19f2468a817d7899068cb, type: 3}
+  - {fileID: 2940114466171644752, guid: 2e8e19ded2150e0469b922c851c23beb, type: 3}
   EnemiesSpawnLevel: 1
   _piramidLevels: 7
   _piramidSpawnPoint: {fileID: 854031661}
