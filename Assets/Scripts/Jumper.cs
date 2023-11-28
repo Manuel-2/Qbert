@@ -264,13 +264,13 @@ abstract public class Jumper : MonoBehaviour
         audioSource.PlayOneShot(jumperDeath);
         Destroy(this.gameObject, 4f);
         StartCoroutine(changeSortingOrderOverTime());
-        StartCoroutine(blinkSprite(.4f));
+        StartBlinkAnimation();
     }
 
     IEnumerator changeSortingOrderOverTime()
     {
         yield return new WaitForSeconds(0.2f);
-        if (currentLogicalCoordinates.x + currentLogicalCoordinates.y != 6)
+        if (currentLogicalCoordinates.x == 0 || currentLogicalCoordinates.y == 0)
         {
             jumperSprite.sortingOrder = -5;
         }
@@ -282,6 +282,11 @@ abstract public class Jumper : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         canJump = true;
+    }
+
+    public void StartBlinkAnimation()
+    {
+        StartCoroutine(blinkSprite(.2f));
     }
 
     IEnumerator blinkSprite(float blinkDuration)

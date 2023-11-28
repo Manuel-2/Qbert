@@ -224,6 +224,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
+        backgroundAudioSource.Play();
         Vector2 logicalSpawnPoint = Vector2.zero;
         playerJumper = SpawnJumper(playerPrefab, logicalSpawnPoint);
         StartCoroutine("ReactivateEnemysSpawn");
@@ -403,6 +404,8 @@ public class GameManager : MonoBehaviour
 
     public void KillPlayer()
     {
+        playerJumper.StartBlinkAnimation();
+        backgroundAudioSource.Pause();
         // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;
 
