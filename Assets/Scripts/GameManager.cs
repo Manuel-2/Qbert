@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject[] Jumpers;
     [SerializeField] int EnemiesSpawnLevel;
+    [SerializeField] int trollSpawnChanse;
 
     [Header("PiramidContruction")]
     [SerializeField] [Min(2)] private int _piramidLevels;
@@ -292,7 +293,6 @@ public class GameManager : MonoBehaviour
     {
         score += amount;
         scoreTextField.text = $"Score: {score}";
-        //TODO: update the UI
     }
 
     public void EnemyDied(Jumper enemy)
@@ -467,13 +467,29 @@ public class GameManager : MonoBehaviour
             {
                 // change this if you add more enemies,generate a random index an select the prefab on an Array
                 int jumper2SpawnIndex = -1;
-                if (snakeOnGame)
+                int Troll = Random.Range(0, 101);
+                if (currentLevelIndex > 2)
                 {
-                    jumper2SpawnIndex = Random.Range(1, Jumpers.Length);
+                    trollSpawnChanse *= 2;
+                }
+                else if (currentLevelIndex > 5)
+                {
+                    trollSpawnChanse *= 3;
+                }
+
+
+                if (Troll < trollSpawnChanse)
+                {
+                    Debug.Log(Troll < trollSpawnChanse);
+                    jumper2SpawnIndex = Random.Range(Jumpers.Length - 2, Jumpers.Length);
+                }
+                else if (snakeOnGame)
+                {
+                    jumper2SpawnIndex = 1;
                 }
                 else
                 {
-                    jumper2SpawnIndex = Random.Range(0, Jumpers.Length);
+                    jumper2SpawnIndex = Random.Range(0, 1);
                 }
                 SpawnEnemy(Jumpers[jumper2SpawnIndex]);
             }
