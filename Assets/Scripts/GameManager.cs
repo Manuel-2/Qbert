@@ -173,11 +173,11 @@ public class GameManager : MonoBehaviour
         InGameUIController.sharedInstance.UpdateProgressFields(stage, level, currentLevel.tileColors[currentLevel.tileColors.Length - 1], currentLevel.blockColor);
         if (stage > 1)
         {
-            trollSpawnChanse *= 2;
+            trollSpawnChanse = 10 * 2;
         }
         else if (stage > 2)
         {
-            trollSpawnChanse *= 3;
+            trollSpawnChanse = 10 * 3;
         }
     }
 
