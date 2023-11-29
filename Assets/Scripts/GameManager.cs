@@ -122,7 +122,6 @@ public class GameManager : MonoBehaviour
             level = 0;
         }
         stage = (int)System.Math.Ceiling((levelIndex + 1) / 3f);
-        Debug.Log(levelIndex);
         if (playerJumper != null)
         {
             Destroy(playerJumper.gameObject);
@@ -172,6 +171,14 @@ public class GameManager : MonoBehaviour
         });
 
         InGameUIController.sharedInstance.UpdateProgressFields(stage, level, currentLevel.tileColors[currentLevel.tileColors.Length - 1], currentLevel.blockColor);
+        if (stage > 1)
+        {
+            trollSpawnChanse *= 2;
+        }
+        else if (stage > 2)
+        {
+            trollSpawnChanse *= 3;
+        }
     }
 
     private void CleanSceneFromObjects()
@@ -491,15 +498,6 @@ public class GameManager : MonoBehaviour
                 // change this if you add more enemies,generate a random index an select the prefab on an Array
                 int jumper2SpawnIndex = -1;
                 int Troll = Random.Range(0, 101);
-                if (currentLevelIndex > 2)
-                {
-                    trollSpawnChanse *= 2;
-                }
-                else if (currentLevelIndex > 5)
-                {
-                    trollSpawnChanse *= 3;
-                }
-
 
                 if (Troll < trollSpawnChanse)
                 {
