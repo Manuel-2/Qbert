@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] AudioClip GameOverSong;
     [Space]
     [SerializeField] AudioSource backgroundAudioSource;
+    private float backgrounsongTime;
 
     public int totalPiramidLevels
     {
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviour
         lives = 3;
         SetUpLevel(0);
         highScore = PlayerPrefs.GetInt("highScore", 0);
+        backgrounsongTime = 0;
     }
 
     private void SetUpLevel(int levelIndex)
@@ -125,6 +127,7 @@ public class GameManager : MonoBehaviour
             Destroy(playerJumper.gameObject);
 
         }
+        backgroundAudioSource.time = backgrounsongTime;
         backgroundAudioSource.Play();
 
         StartCoroutine("ReactivateEnemysSpawn");
@@ -241,7 +244,7 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        backgroundAudioSource.Play();
+        //backgroundAudioSource.Play();
         Vector2 logicalSpawnPoint = Vector2.zero;
         playerJumper = SpawnJumper(playerPrefab, logicalSpawnPoint);
         StartCoroutine("ReactivateEnemysSpawn");
@@ -286,6 +289,7 @@ public class GameManager : MonoBehaviour
 
     private void LevelComplete()
     {
+        backgrounsongTime = backgroundAudioSource.time;
         backgroundAudioSource.Stop();
         enemiesSpawning = false;
         levelCompleted = true;
@@ -434,7 +438,6 @@ public class GameManager : MonoBehaviour
         playerJumper.RestoreScaleAnimation();
         UpdateScore(-300);
         playerJumper.StartBlinkAnimation();
-        backgroundAudioSource.Pause();
         // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;
         enemiesSpawning = false;
