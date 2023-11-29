@@ -405,7 +405,6 @@ public class GameManager : MonoBehaviour
 
     public void ActivateRainbowPlatform(Platform currentPlatform)
     {
-        Debug.Log(playerJumper.isAlive);
         playerJumper.transform.parent = currentPlatform.transform;
         enemiesSpawning = false;
         currentPlatform.ActivatePlatform();
