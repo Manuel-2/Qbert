@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -8,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager sharedInstance;
 
     [Header("Game Configuration")]
+    [SerializeField] float points2ExtraLife;
     public Level[] levelsConfig;
 
     [Header("Jumpers")]
@@ -39,8 +39,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] AudioClip playerDeathAudioClip;
     [Space]
     [SerializeField] AudioSource backgroundAudioSource;
-    [Header("UI")]
-    [SerializeField] TextMeshProUGUI scoreTextField;
+
 
     private AudioSource audioSource;
 
@@ -87,6 +86,9 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool levelCompleted;
     private int lives;
+    private int extraLivesScore;
+    private int stage;
+    private int level;
 
     private void Awake()
     {
@@ -99,6 +101,7 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         audioSource = this.gameObject.GetComponent<AudioSource>();
+        level = 0;
     }
 
     private void Start()
@@ -113,6 +116,13 @@ public class GameManager : MonoBehaviour
 
     private void SetUpLevel(int levelIndex)
     {
+        level++;
+        if (level > 3)
+        {
+            level = 0;
+        }
+        stage = (int)System.Math.Ceiling((levelIndex + 1) / 3f);
+        Debug.Log(levelIndex);
         if (playerJumper != null)
         {
             Destroy(playerJumper.gameObject);
@@ -160,13 +170,15 @@ public class GameManager : MonoBehaviour
                 piramidCubeRenderer.color = currentLevel.blockColor;
             });
         });
+
+        InGameUIController.sharedInstance.UpdateProgressFields(stage, level, currentLevel.tileColors[currentLevel.tileColors.Length - 1], currentLevel.blockColor);
     }
 
     private void CleanSceneFromObjects()
     {
         if (currentEnemies != null)
         {
-            AddScore(currentEnemies.Count * 500);
+            UpdateScore(currentEnemies.Count * 500);
             foreach (Jumper enemy in currentEnemies)
             {
                 //Debug.Log(enemy.gameObject.name);
@@ -176,7 +188,7 @@ public class GameManager : MonoBehaviour
         }
         if (currentPlatforms != null)
         {
-            AddScore(currentPlatforms.Count * 500);
+            UpdateScore(currentPlatforms.Count * 500);
             foreach (Platform platform in currentPlatforms)
             {
                 Destroy(platform.gameObject);
@@ -289,10 +301,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void AddScore(int amount)
+    public void UpdateScore(int amount)
     {
         score += amount;
-        scoreTextField.text = $"Score: {score}";
+        extraLivesScore += amount;
+        score = Mathf.Clamp(score, 0, int.MaxValue);
+
+        if (extraLivesScore > points2ExtraLife)
+        {
+            extraLivesScore = 0;
+            lives++;
+            InGameUIController.sharedInstance.UpdateLivesField(lives);
+        }
+        InGameUIController.sharedInstance.UpdateScoreField(score);
     }
 
     public void EnemyDied(Jumper enemy)
@@ -322,7 +343,7 @@ public class GameManager : MonoBehaviour
                 if (tileColorIndex != currentLevel.tileColors.Length - 1)
                 {
                     tileColorIndex++;
-                    AddScore(25);
+                    UpdateScore(25);
                 }
 
             }
@@ -336,7 +357,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     tileColorIndex++;
-                    AddScore(25);
+                    UpdateScore(25);
                 }
             }
 
@@ -404,6 +425,7 @@ public class GameManager : MonoBehaviour
 
     public void KillPlayer()
     {
+        UpdateScore(-1000);
         playerJumper.StartBlinkAnimation();
         backgroundAudioSource.Pause();
         // disclamer! the level is not complete just a trick to stop the player for jumping
@@ -421,6 +443,7 @@ public class GameManager : MonoBehaviour
             snakeOnGame = false;
         }
         lives--;
+        InGameUIController.sharedInstance.UpdateLivesField(lives);
         if (lives > 0)
         {
             StartCoroutine("RespawnPlayer");
@@ -480,7 +503,6 @@ public class GameManager : MonoBehaviour
 
                 if (Troll < trollSpawnChanse)
                 {
-                    Debug.Log(Troll < trollSpawnChanse);
                     jumper2SpawnIndex = Random.Range(Jumpers.Length - 2, Jumpers.Length);
                 }
                 else if (snakeOnGame)
@@ -512,7 +534,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ReactivateEnemysSpawn()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         enemiesSpawning = true;
     }
 }

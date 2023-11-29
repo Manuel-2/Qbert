@@ -249,7 +249,7 @@ abstract public class Jumper : MonoBehaviour
         jumperRigidbody2D.AddForceAtPosition(jumpDeadVector * deathJumpForce, this.transform.position + Vector3.up * 2, ForceMode2D.Impulse);
         if (tileInteraction == TileInteractions.snake)
         {
-            GameManager.sharedInstance.AddScore(500);
+            GameManager.sharedInstance.UpdateScore(500);
             GameManager.sharedInstance.snakeOnGame = false;
         }
         else if (tileInteraction == TileInteractions.player)
