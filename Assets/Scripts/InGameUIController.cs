@@ -11,6 +11,8 @@ public class InGameUIController : MonoBehaviour
 
     [SerializeField] GameObject gameOverScreen;
     [SerializeField] int mainMenuSceneIndex;
+    [SerializeField] int gameSceneIndex;
+    [SerializeField] Animator animator;
 
     [Header("In Game UI")]
     [SerializeField] TextMeshProUGUI progressField;
@@ -18,9 +20,15 @@ public class InGameUIController : MonoBehaviour
     [SerializeField] Image targetBlock;
     [Space]
     [SerializeField] TextMeshProUGUI scoreTextField;
+    [SerializeField] TextMeshProUGUI highScoreTextField;
     [SerializeField] GameObject livesContainer;
     [SerializeField] GameObject liveUiSpritePrefab;
     [SerializeField] List<GameObject> liveSprites;
+
+    [Header("GameOver Screen")]
+    [SerializeField] TextMeshProUGUI gameOverLevelField;
+    [SerializeField] TextMeshProUGUI gameOverScoreField;
+    [SerializeField] TextMeshProUGUI gameOverHighScoreField;
 
     private void Awake()
     {
@@ -34,21 +42,36 @@ public class InGameUIController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        highScoreTextField.text = $"High Score: {PlayerPrefs.GetInt("highScore", 0)}";
+    }
+
     public void ShowGameoverScreen()
     {
-        //Todo: call an animation
-        gameOverScreen.SetActive(true);
+        animator.SetTrigger("GameOver");
+    }
+
+    public void UpdateGameOverScreen(int stage, int level, int score, int highScore)
+    {
+        gameOverLevelField.text = $"Stage: {stage} Level: {level}";
+        gameOverScoreField.text = $"Score: {score}";
+        gameOverHighScoreField.text = $"HighScore: {highScore}";
     }
 
     public void ReturnMainMenu()
     {
-        SceneManager.LoadScene(mainMenuSceneIndex);
+        TransitionManager.sharedInstance.LoadScene(mainMenuSceneIndex);
+    }
+
+    public void RetryGame()
+    {
+        TransitionManager.sharedInstance.LoadScene(gameSceneIndex);
     }
 
     public void UpdateScoreField(int score)
     {
         scoreTextField.text = $"Score: {score}";
-
     }
 
     public void UpdateLivesField(int lives)
@@ -66,7 +89,7 @@ public class InGameUIController : MonoBehaviour
         }
     }
 
-    public void UpdateProgressFields(int stage,int level, Color tileColor, Color blockColor)
+    public void UpdateProgressFields(int stage, int level, Color tileColor, Color blockColor)
     {
         progressField.text = $"Stage: {stage} Level: {level}";
         targetTile.color = tileColor;

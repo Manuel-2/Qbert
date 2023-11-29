@@ -83,6 +83,7 @@ public class GameManager : MonoBehaviour
     private List<Jumper> currentEnemies;
 
     private int score;
+    private int highScore;
     [HideInInspector]
     public bool levelCompleted;
     private int lives;
@@ -112,6 +113,7 @@ public class GameManager : MonoBehaviour
         score = 0;
         lives = 3;
         SetUpLevel(0);
+        highScore = PlayerPrefs.GetInt("highScore", 0);
     }
 
     private void SetUpLevel(int levelIndex)
@@ -434,7 +436,7 @@ public class GameManager : MonoBehaviour
         if (activePlatform != null) return;
         playerJumper.isAlive = false;
         playerJumper.RestoreScaleAnimation();
-        UpdateScore(-1000);
+        UpdateScore(-300);
         playerJumper.StartBlinkAnimation();
         backgroundAudioSource.Pause();
         // disclamer! the level is not complete just a trick to stop the player for jumping
@@ -459,8 +461,21 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            InGameUIController.sharedInstance.ShowGameoverScreen();
+            GameOver();
         }
+    }
+
+    private void GameOver()
+    {
+        
+        enemiesSpawning = false;
+        InGameUIController.sharedInstance.ShowGameoverScreen();
+        if (score > highScore)
+        {
+            PlayerPrefs.SetInt("highScore", score);
+        }
+        // update gameOver ui
+        InGameUIController.sharedInstance.UpdateGameOverScreen(stage, level, score, PlayerPrefs.GetInt("highScore", 0));
     }
 
     private void DestroyEntity(GameObject entity)
