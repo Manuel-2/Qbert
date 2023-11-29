@@ -432,6 +432,7 @@ public class GameManager : MonoBehaviour
 
     public void KillPlayer()
     {
+        if (activePlatform != null) return;
         UpdateScore(-1000);
         playerJumper.StartBlinkAnimation();
         backgroundAudioSource.Pause();
