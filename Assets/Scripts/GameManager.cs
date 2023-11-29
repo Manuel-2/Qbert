@@ -36,12 +36,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] float colorChangeSpeed;
     [SerializeField] Color[] levelCompleteAnimationColors;
     [SerializeField] AudioClip levelCompleteMusic;
-    [SerializeField] AudioClip playerDeathAudioClip;
+    [SerializeField] AudioClip GameOverSong;
     [Space]
     [SerializeField] AudioSource backgroundAudioSource;
-
-
-    private AudioSource audioSource;
 
     public int totalPiramidLevels
     {
@@ -101,7 +98,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        audioSource = this.gameObject.GetComponent<AudioSource>();
         level = 0;
     }
 
@@ -290,11 +286,11 @@ public class GameManager : MonoBehaviour
 
     private void LevelComplete()
     {
-        backgroundAudioSource.Pause();
+        backgroundAudioSource.Stop();
         enemiesSpawning = false;
         levelCompleted = true;
         StartCoroutine("LevelCompleteTilesAnimation");
-        audioSource.PlayOneShot(levelCompleteMusic);
+        backgroundAudioSource.PlayOneShot(levelCompleteMusic);
         CleanSceneFromObjects();
     }
 
@@ -441,8 +437,6 @@ public class GameManager : MonoBehaviour
         backgroundAudioSource.Pause();
         // disclamer! the level is not complete just a trick to stop the player for jumping
         levelCompleted = true;
-
-        audioSource.PlayOneShot(playerDeathAudioClip);
         enemiesSpawning = false;
         if (currentEnemies != null)
         {
@@ -467,7 +461,8 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
-        
+        backgroundAudioSource.Stop();
+        backgroundAudioSource.PlayOneShot(GameOverSong);
         enemiesSpawning = false;
         InGameUIController.sharedInstance.ShowGameoverScreen();
         if (score > highScore)
