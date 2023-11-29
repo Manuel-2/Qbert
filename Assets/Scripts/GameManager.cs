@@ -461,6 +461,7 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        UIController.sharedInstance.EnableControl();
         backgroundAudioSource.Stop();
         backgroundAudioSource.PlayOneShot(GameOverSong);
         enemiesSpawning = false;

@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
     [SerializeField] int playScene;
 
     private int selectedButtonIndex;
+    private bool control;
 
     private void Awake()
     {
@@ -33,45 +34,57 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         Application.targetFrameRate = 60;
-        selectedButtonIndex = 2;
+        selectedButtonIndex = 0;
         buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
+
+        control = GameManager.sharedInstance == null;
     }
 
     private void Update()
     {
         //todo: define the controls
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (control)
         {
-            //buttons[selectedButtonIndex].OnPointerExit(new PointerEventData(EventSystem.current));
-            buttons[selectedButtonIndex].UnSelect();
-            selectedButtonIndex--;
-            if (selectedButtonIndex < 0)
+            if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                selectedButtonIndex = buttons.Length - 1;
+                //buttons[selectedButtonIndex].OnPointerExit(new PointerEventData(EventSystem.current));
+                buttons[selectedButtonIndex].UnSelect();
+                selectedButtonIndex--;
+                if (selectedButtonIndex < 0)
+                {
+                    selectedButtonIndex = buttons.Length - 1;
+                }
+                buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
             }
-            buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            //buttons[selectedButtonIndex].OnPointerExit(new PointerEventData(EventSystem.current));
-            buttons[selectedButtonIndex].UnSelect();
-            selectedButtonIndex++;
-            if (selectedButtonIndex > buttons.Length - 1)
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                selectedButtonIndex = 0;
+                //buttons[selectedButtonIndex].OnPointerExit(new PointerEventData(EventSystem.current));
+                buttons[selectedButtonIndex].UnSelect();
+                selectedButtonIndex++;
+                if (selectedButtonIndex > buttons.Length - 1)
+                {
+                    selectedButtonIndex = 0;
+                }
+                buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
             }
-            buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
+            else if (Input.GetKeyDown(KeyCode.Return))
+            {
+                buttons[selectedButtonIndex].Click();
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.Return))
-        {
-            buttons[selectedButtonIndex].Click();
-        }
+
+
+    }
+
+    public void EnableControl()
+    {
+        control = true;
     }
 
     public void MouseSelect(int buttonIndex)
     {
-        foreach(UIButton button in buttons)
+        foreach (UIButton button in buttons)
         {
             //button.OnPointerExit(new PointerEventData(EventSystem.current));
             buttons[selectedButtonIndex].UnSelect();
