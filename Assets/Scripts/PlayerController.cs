@@ -56,6 +56,7 @@ public class PlayerController : Jumper
             {
                 colided = true;
                 GameManager.sharedInstance.KillPlayer();
+                transform.localScale = Vector3.one;
             }
         }
         else if (collision.gameObject.CompareTag("Troll"))

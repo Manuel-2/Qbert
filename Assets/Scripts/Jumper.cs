@@ -40,7 +40,7 @@ abstract public class Jumper : MonoBehaviour
     private float whenLands;
     protected bool lerping = false;
     protected bool canJump;
-    private bool isAlive = false;
+    public bool isAlive = false;
     private bool spawing = false;
     protected int facingDirections;
     protected Platform currentPlatform;
@@ -53,7 +53,7 @@ abstract public class Jumper : MonoBehaviour
 
     public virtual void Update()
     {
-        if (lerping)
+        if (lerping && isAlive)
         {
             this.jumpLerpCurrent = Mathf.MoveTowards(this.jumpLerpCurrent, this.jumpLerpTarget, this.currentJumpLerpSpeed * Time.deltaTime);
 
@@ -265,6 +265,11 @@ abstract public class Jumper : MonoBehaviour
         Destroy(this.gameObject, 4f);
         StartCoroutine(changeSortingOrderOverTime());
         StartBlinkAnimation();
+    }
+
+    public void RestoreScaleAnimation()
+    {
+        jumperAnimator.SetBool("Alive", false);
     }
 
     IEnumerator changeSortingOrderOverTime()

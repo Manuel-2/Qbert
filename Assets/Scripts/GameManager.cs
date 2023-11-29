@@ -188,7 +188,6 @@ public class GameManager : MonoBehaviour
             UpdateScore(currentEnemies.Count * 500);
             foreach (Jumper enemy in currentEnemies)
             {
-                //Debug.Log(enemy.gameObject.name);
                 Destroy(enemy.gameObject);
             }
             currentEnemies.Clear();
@@ -406,6 +405,7 @@ public class GameManager : MonoBehaviour
 
     public void ActivateRainbowPlatform(Platform currentPlatform)
     {
+        Debug.Log(playerJumper.isAlive);
         playerJumper.transform.parent = currentPlatform.transform;
         enemiesSpawning = false;
         currentPlatform.ActivatePlatform();
@@ -433,6 +433,8 @@ public class GameManager : MonoBehaviour
     public void KillPlayer()
     {
         if (activePlatform != null) return;
+        playerJumper.isAlive = false;
+        playerJumper.RestoreScaleAnimation();
         UpdateScore(-1000);
         playerJumper.StartBlinkAnimation();
         backgroundAudioSource.Pause();
