@@ -109,6 +109,6 @@ public class UIController : MonoBehaviour
 
     public void ClickExitGame()
     {
-        Debug.Log("Exit");
+        Application.Quit();
     }
 }
