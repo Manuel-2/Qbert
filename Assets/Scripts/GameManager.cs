@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] float spawnFallLenght;
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject[] Jumpers;
+    [SerializeField] GameObject explotionEfectPrefab;
     [SerializeField] int EnemiesSpawnLevel;
     [SerializeField] int trollSpawnChanse;
 
@@ -189,6 +190,7 @@ public class GameManager : MonoBehaviour
             UpdateScore(currentEnemies.Count * 500);
             foreach (Jumper enemy in currentEnemies)
             {
+                explotionEfect(enemy.transform.position);
                 Destroy(enemy.gameObject);
             }
             currentEnemies.Clear();
@@ -198,6 +200,7 @@ public class GameManager : MonoBehaviour
             UpdateScore(currentPlatforms.Count * 500);
             foreach (Platform platform in currentPlatforms)
             {
+                explotionEfect(platform.transform.position);
                 Destroy(platform.gameObject);
             }
         }
@@ -327,6 +330,12 @@ public class GameManager : MonoBehaviour
     public void EnemyDied(Jumper enemy)
     {
         currentEnemies.Remove(enemy);
+    }
+
+    private void explotionEfect(Vector3 position)
+    {
+        var explotion = Instantiate(explotionEfectPrefab, position, Quaternion.identity);
+        Destroy(explotion, 1f);
     }
 
     public void StepOnTile(Vector2 logicalCoordinates, TileInteractions interactionType)
@@ -479,8 +488,8 @@ public class GameManager : MonoBehaviour
 
     private void DestroyEntity(GameObject entity)
     {
-        //TODO: add particles
-        GameObject.Destroy(entity);
+        explotionEfect(entity.transform.position);
+        Destroy(entity);
     }
 
     IEnumerator LevelCompleteTilesAnimation()
