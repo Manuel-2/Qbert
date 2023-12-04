@@ -261,7 +261,7 @@ abstract public class Jumper : MonoBehaviour
         {
             GameManager.sharedInstance.EnemyDied(this);
         }
-        audioSource.PlayOneShot(jumperDeath);
+        
         Destroy(this.gameObject, 4f);
         StartCoroutine(changeSortingOrderOverTime());
         StartBlinkAnimation();
@@ -291,6 +291,7 @@ abstract public class Jumper : MonoBehaviour
 
     public void StartBlinkAnimation()
     {
+        audioSource.PlayOneShot(jumperDeath);
         StartCoroutine(blinkSprite(.2f));
     }
 

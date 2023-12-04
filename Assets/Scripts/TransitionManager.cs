@@ -47,7 +47,6 @@ public class TransitionManager : MonoBehaviour
             inSecuence.Kill(true);
             SceneManager.LoadScene(sceneIndex);
         });
-        
     }
 
     public void LoadScene(int sceneIndex)
