@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using TMPro;
 using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
@@ -15,6 +16,9 @@ public class UIController : MonoBehaviour
     public Color selectedButtonColor, unSelectedButtonColor;
     [Header("Scene indexs")]
     [SerializeField] int playScene;
+    [Space]
+    [SerializeField] TextMeshProUGUI highScoreText;
+
 
     private int selectedButtonIndex;
     private bool control;
@@ -38,11 +42,13 @@ public class UIController : MonoBehaviour
         buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
 
         control = GameManager.sharedInstance == null;
+
+        int highScore = PlayerPrefs.GetInt("highScore", 0);
+        highScoreText.text = $"HighScore: {highScore}";
     }
 
     private void Update()
     {
-        //todo: define the controls
 
         if (control)
         {
@@ -92,19 +98,26 @@ public class UIController : MonoBehaviour
         selectedButtonIndex = buttonIndex;
     }
 
+    public void ResetHighScore()
+    {
+        PlayerPrefs.SetInt("highScore", 0);
+        highScoreText.text = $"HighScore: {0}";
+    }
+
+    public void SetTutorialSkipPreference(bool skipTutorial)
+    {
+        // 0 is false, 1 is true
+        int skipValue = 0;
+        if (skipTutorial)
+        {
+            skipValue = 1;
+        }
+        PlayerPrefs.SetInt("skipTutorial", skipValue);
+    }
+
     public void ClickPlay()
     {
         TransitionManager.sharedInstance.LoadScene(playScene);
-    }
-
-    public void ClickSettings()
-    {
-        Debug.Log("Settings");
-    }
-
-    public void ClickCreddits()
-    {
-        Debug.Log("Creddits");
     }
 
     public void ClickExitGame()
