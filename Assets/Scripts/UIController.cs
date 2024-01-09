@@ -16,8 +16,6 @@ public class UIController : MonoBehaviour
     public Color selectedButtonColor, unSelectedButtonColor;
     [Header("Scene indexs")]
     [SerializeField] int playScene;
-    [Space]
-    [SerializeField] TextMeshProUGUI highScoreText;
 
 
     private int selectedButtonIndex;
@@ -42,9 +40,6 @@ public class UIController : MonoBehaviour
         buttons[selectedButtonIndex].OnPointerEnter(new PointerEventData(EventSystem.current));
 
         control = GameManager.sharedInstance == null;
-
-        int highScore = PlayerPrefs.GetInt("highScore", 0);
-        highScoreText.text = $"HighScore: {highScore}";
     }
 
     private void Update()
@@ -101,7 +96,7 @@ public class UIController : MonoBehaviour
     public void ResetHighScore()
     {
         PlayerPrefs.SetInt("highScore", 0);
-        highScoreText.text = $"HighScore: {0}";
+        //highScoreText.text = $"HighScore: {0}";
     }
 
     public void SetTutorialSkipPreference(bool skipTutorial)
